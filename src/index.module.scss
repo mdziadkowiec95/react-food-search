@@ -1,0 +1,39 @@
+$primary: pink;
+
+@import url("https://fonts.googleapis.com/css?family=Montserrat:300,500,700");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+  min-height: 101vh;
+}
+
+a {
+  &:link,
+  &:visited {
+    color: #ddd;
+    text-decoration: none;
+  }
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Search from './components/Search';
+import Search from './components/Search/Search';
 
 class App extends Component {
   state = {
