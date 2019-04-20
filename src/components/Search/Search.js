@@ -5,6 +5,7 @@ import Button from '../Button/Button';
 import { MdNearMe } from 'react-icons/md';
 import { debounce } from 'underscore';
 import Select from '../Select/Select';
+import Card from '../Card/Card';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
@@ -15,7 +16,9 @@ class Search extends React.Component {
     cityData: {},
     restaurants: [],
     cuisines: [],
-    categories: []
+    categories: [],
+    categoryID: '',
+    cuisineID: ''
   };
 
   componentDidMount() {
@@ -95,6 +98,22 @@ class Search extends React.Component {
     this.handleCityChangeDebounced();
   };
 
+  handleCategoryChange = e => {
+    const ID = e.target[e.target.selectedIndex].dataset.id;
+
+    this.setState({
+      categoryID: ID
+    });
+  };
+
+  handleCuisineChange = e => {
+    const ID = e.target[e.target.selectedIndex].dataset.id;
+
+    this.setState({
+      cuisineID: ID
+    });
+  };
+
   getCityData = () => {
     if (this.state.queryCity) {
       fetch(
@@ -136,6 +155,12 @@ class Search extends React.Component {
         .catch(err => {
           console.log(err);
         });
+    } else {
+      this.setState({
+        cityData: {},
+        cuisineID: '',
+        cuisines: []
+      });
     }
   };
 
@@ -200,17 +225,24 @@ class Search extends React.Component {
   };
 
   sendSearchRequest = () => {
+    const cuisineQuery = this.state.cuisineID
+      ? `&cuisines=${this.state.cuisineID}`
+      : '';
+    const categoryQuery = this.state.categoryID
+      ? `&category=${this.state.categoryID}`
+      : '';
+
     console.log(
       `https://developers.zomato.com/api/v2.1/search?entity_id=${
         this.state.cityData.id
-      }&entity_type=city`
+      }&entity_type=city${cuisineQuery + categoryQuery}`
     );
 
     if (this.state.cityData.id) {
       fetch(
         `https://developers.zomato.com/api/v2.1/search?entity_id=${
           this.state.cityData.id
-        }&entity_type=city`,
+        }&entity_type=city${cuisineQuery + categoryQuery}`,
         {
           method: 'GET',
           headers: new Headers({
@@ -220,7 +252,29 @@ class Search extends React.Component {
       )
         .then(data => data.json())
         .then(res => {
-          const restaurantsArr = res.restaurants;
+          console.log(res);
+          const restaurantsArr = res.restaurants.map(item => {
+            const restaurant = item.restaurant;
+            return {
+              id: restaurant.id,
+              name: restaurant.name,
+              city: restaurant.location.city,
+              address: restaurant.location.address,
+              area: restaurant.location.locality_verbose,
+              img: {
+                thumb: restaurant.thumb,
+                full: restaurant.featured_image
+              },
+              cuisines: restaurant.cuisines,
+              currency: restaurant.currency,
+              costForTwo: restaurant.average_cost_for_two,
+              ratingNumber: restaurant.user_rating.agerate_rating,
+              ratingColor: restaurant.user_rating.rating_color,
+              ratingText: restaurant.user_rating.rating_text,
+              votes: restaurant.user_rating.votes
+            };
+          });
+
           if (restaurantsArr.length > 0) {
             this.setState({
               restaurants: restaurantsArr
@@ -234,48 +288,53 @@ class Search extends React.Component {
   };
 
   render() {
+    const { restaurants } = this.state;
     return (
-      <div className={styles.wrapper}>
-        <form
-          method="POST"
-          action=""
-          className={styles.form}
-          onSubmit={this.handleFormSubmit}
-        >
-          <div className={styles.JSON}>
-            {/* {JSON.stringify(this.state, null, 0)} */}
-          </div>
+      <>
+        <div className={styles.wrapper}>
+          <form
+            method="POST"
+            action=""
+            className={styles.form}
+            onSubmit={this.handleFormSubmit}
+          >
+            <div className={styles.JSON}>
+              {/* {JSON.stringify(this.state, null, 0)} */}
+            </div>
 
-          <div className={styles.formGroup}>
-            <button
-              type="button"
-              onClick={this.getGeolocation}
-              className={styles.btnLocation}
-            >
-              <MdNearMe />
-            </button>
-            <input
-              type="text"
-              placeholder="Enter city name..."
-              value={this.state.queryCity}
-              onChange={this.handleCityChange}
-              className={cn(styles.formInput, styles.formInputLocation)}
-            />
-          </div>
-          <Button submit>Search</Button>
-        </form>
-        <div>
-          {this.state.categories.length && (
-            <Select dataType="categories" items={this.state.categories} />
-          )}
-          {this.state.cuisines.length && (
-            <Select dataType="cuisine" items={this.state.cuisines} />
-          )}
+            <div className={styles.formGroup}>
+              <button
+                type="button"
+                onClick={this.getGeolocation}
+                className={styles.btnLocation}
+              >
+                <MdNearMe />
+              </button>
+              <input
+                type="text"
+                placeholder="Enter city name..."
+                value={this.state.queryCity}
+                onChange={this.handleCityChange}
+                className={cn(styles.formInput, styles.formInputLocation)}
+              />
+            </div>
+            <div className={styles.selectWrapper}>
+              <Select
+                dataType="categories"
+                onChangeFn={this.handleCategoryChange}
+                items={this.state.categories}
+              />
+              <Select
+                dataType="cuisine"
+                onChangeFn={this.handleCuisineChange}
+                items={this.state.cuisines}
+              />
+            </div>
+            <Button submit>Search</Button>
+          </form>
         </div>
-
-        {this.state.restaurants &&
-          this.state.restaurants.map(item => <p>{item.restaurant.name}</p>)}
-      </div>
+        <div>{restaurants && restaurants.map(item => <Card {...item} />)}</div>
+      </>
     );
   }
 }

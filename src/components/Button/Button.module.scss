@@ -29,4 +29,10 @@
       color: #fff;
     }
   }
+
+  &Submit {
+    @extend .btnPrimary;
+
+    width: 100%;
+  }
 }

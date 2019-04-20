@@ -5,11 +5,15 @@
 
 .wrapper {
   padding: 4rem 0;
+
   background: linear-gradient(rgba(14, 5, 5, 0.27), rgba(41, 18, 11, 0.17)),
     url('../../assets/images/app-hero-bg.jpeg') no-repeat center / cover;
 }
 
 .form {
+  margin: 0 auto;
+  max-width: 300px;
+
   &Group {
     display: flex;
     align-items: center;
@@ -24,6 +28,7 @@
   &Input {
     padding: 0.4rem;
     height: 40px;
+    width: 100%;
     font-size: 0.9rem;
 
     &Location {
