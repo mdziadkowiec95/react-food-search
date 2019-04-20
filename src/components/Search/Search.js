@@ -140,7 +140,6 @@ class Search extends React.Component {
   };
 
   getCategories = () => {
-    alert();
     fetch(`https://developers.zomato.com/api/v2.1/categories`, {
       method: 'GET',
       headers: new Headers({
@@ -265,10 +264,15 @@ class Search extends React.Component {
           </div>
           <Button submit>Search</Button>
         </form>
-        <div />
-        {this.state.cuisines.length && (
-          <Select dataType="cuisine" items={this.state.cuisines} />
-        )}
+        <div>
+          {this.state.categories.length && (
+            <Select dataType="categories" items={this.state.categories} />
+          )}
+          {this.state.cuisines.length && (
+            <Select dataType="cuisine" items={this.state.cuisines} />
+          )}
+        </div>
+
         {this.state.restaurants &&
           this.state.restaurants.map(item => <p>{item.restaurant.name}</p>)}
       </div>
