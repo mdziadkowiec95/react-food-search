@@ -18,7 +18,7 @@ const Card = ({
   votes
 }) => (
   <a href="#">
-    <div>{console.log(name)}</div>
+    <div>Card item</div>
   </a>
 );
 
