@@ -1,16 +1,56 @@
+.JSON {
+  color: white;
+  padding-bottom: 1rem;
+}
+
+.wrapper {
+  padding: 4rem 0;
+  background: linear-gradient(rgba(14, 5, 5, 0.27), rgba(41, 18, 11, 0.17)),
+    url('../../assets/images/app-hero-bg.jpeg') no-repeat center / cover;
+}
+
 .form {
-  margin-top: 3rem;
-
   &Group {
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &Button {
+    height: 40px;
     font-size: 1.5rem;
   }
 
   &Input {
-    padding: .4rem;
-    font-size: 1.5rem;
+    padding: 0.4rem;
+    height: 40px;
+    font-size: 0.9rem;
+
+    &Location {
+      border-radius: 0 5px 5px 0;
+    }
+  }
+}
+
+.btnLocation {
+  position: relative;
+  display: inline-block;
+  padding: 4px;
+  width: 40px;
+  height: 40px;
+  border: solid 1px transparent;
+  border-radius: 5px 0 0 5px;
+  color: #3464b1;
+  font-size: 20px;
+  vertical-align: middle;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s;
+
+  &:hover {
+    opacity: 0.8;
   }
 }

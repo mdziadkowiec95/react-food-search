@@ -1,11 +1,10 @@
 import React from 'react';
 import styles from './Search.module.scss';
+import cn from 'classnames';
 import Button from '../Button/Button';
 import { MdNearMe } from 'react-icons/md';
-import styled from 'styled-components';
-// import { LocationDisabled } from 'styled-icons/material'
-import { Lock } from 'styled-icons/material';
 import { debounce } from 'underscore';
+import Select from '../Select/Select';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
@@ -13,8 +12,15 @@ class Search extends React.Component {
   state = {
     geolocationCoords: {},
     queryCity: '',
-    cityData: {}
+    cityData: {},
+    restaurants: [],
+    cuisines: [],
+    categories: []
   };
+
+  componentDidMount() {
+    this.getCategories();
+  }
 
   getGeolocation = () => {
     if (navigator.geolocation) {
@@ -112,10 +118,13 @@ class Search extends React.Component {
               id: matchedLocations[0].id
             };
 
-            this.setState({
-              queryCity: cityData.name,
-              cityData: cityData
-            });
+            this.setState(
+              {
+                queryCity: cityData.name,
+                cityData: cityData
+              },
+              this.getCuisines
+            );
           } else {
             this.setState({
               queryCity: '',
@@ -123,6 +132,52 @@ class Search extends React.Component {
             });
             alert('Podana fraza nie pasuje do zadnej lokalizacji...');
           }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  };
+
+  getCategories = () => {
+    alert();
+    fetch(`https://developers.zomato.com/api/v2.1/categories`, {
+      method: 'GET',
+      headers: new Headers({
+        'user-key': API_KEY
+      })
+    })
+      .then(data => data.json())
+      .then(res => {
+        console.log(res);
+        this.setState({
+          categories: res.categories
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  getCuisines = () => {
+    if (this.state.cityData.id) {
+      fetch(
+        `https://developers.zomato.com/api/v2.1/cuisines?city_id=${
+          this.state.cityData.id
+        }`,
+        {
+          method: 'GET',
+          headers: new Headers({
+            'user-key': API_KEY
+          })
+        }
+      )
+        .then(data => data.json())
+        .then(res => {
+          console.log(res);
+          this.setState({
+            cuisines: res.cuisines
+          });
         })
         .catch(err => {
           console.log(err);
@@ -166,7 +221,12 @@ class Search extends React.Component {
       )
         .then(data => data.json())
         .then(res => {
-          console.log(res);
+          const restaurantsArr = res.restaurants;
+          if (restaurantsArr.length > 0) {
+            this.setState({
+              restaurants: restaurantsArr
+            });
+          }
         })
         .catch(err => {
           console.log(err);
@@ -176,30 +236,42 @@ class Search extends React.Component {
 
   render() {
     return (
-      <form
-        method="POST"
-        action=""
-        className={styles.form}
-        onSubmit={this.handleFormSubmit}
-      >
-        {JSON.stringify(this.state, null, 0)}
-        <div className={styles.formGroup}>
-          <button
-            type="button"
-            onClick={this.getGeolocation}
-            className={styles.formButton}
-          >
-            <MdNearMe />
-          </button>
-          <input
-            type="text"
-            value={this.state.queryCity}
-            onChange={this.handleCityChange}
-            className={styles.formInput}
-          />
-        </div>
-        <Button submit>Search</Button>
-      </form>
+      <div className={styles.wrapper}>
+        <form
+          method="POST"
+          action=""
+          className={styles.form}
+          onSubmit={this.handleFormSubmit}
+        >
+          <div className={styles.JSON}>
+            {/* {JSON.stringify(this.state, null, 0)} */}
+          </div>
+
+          <div className={styles.formGroup}>
+            <button
+              type="button"
+              onClick={this.getGeolocation}
+              className={styles.btnLocation}
+            >
+              <MdNearMe />
+            </button>
+            <input
+              type="text"
+              placeholder="Enter city name..."
+              value={this.state.queryCity}
+              onChange={this.handleCityChange}
+              className={cn(styles.formInput, styles.formInputLocation)}
+            />
+          </div>
+          <Button submit>Search</Button>
+        </form>
+        <div />
+        {this.state.cuisines.length && (
+          <Select dataType="cuisine" items={this.state.cuisines} />
+        )}
+        {this.state.restaurants &&
+          this.state.restaurants.map(item => <p>{item.restaurant.name}</p>)}
+      </div>
     );
   }
 }
