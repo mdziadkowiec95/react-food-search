@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AppContext from '../../AppContext';
 import Search from '../../components/Search/Search';
-import City from '../City/City';
+import Results from '../Results/Results';
+import Restaurant from '../Restaurant/Restaurant';
 import { debounce } from 'underscore';
+
+import { restaurantsTEST } from '../../testData';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
@@ -15,7 +18,8 @@ class Root extends Component {
       geolocationCoords: {},
       queryCity: '',
       cityData: {},
-      restaurants: [],
+      // restaurants: [],
+      restaurants: restaurantsTEST,
       cuisines: [],
       categories: [],
       categoryID: '',
@@ -26,10 +30,6 @@ class Root extends Component {
       handleFormSubmit: this.handleFormSubmit,
       getGeolocation: this.getGeolocation
     };
-  }
-
-  componentDidMount() {
-    this.getCategories();
   }
 
   getGeolocation = () => {
@@ -171,25 +171,6 @@ class Root extends Component {
     }
   };
 
-  getCategories = () => {
-    fetch(`https://developers.zomato.com/api/v2.1/categories`, {
-      method: 'GET',
-      headers: new Headers({
-        'user-key': API_KEY
-      })
-    })
-      .then(data => data.json())
-      .then(res => {
-        console.log(res);
-        this.setState({
-          categories: res.categories
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
   getCuisines = () => {
     if (this.state.cityData.id) {
       fetch(
@@ -268,10 +249,9 @@ class Root extends Component {
               city: restaurant.location.city,
               address: restaurant.location.address,
               area: restaurant.location.locality_verbose,
-              img: {
-                thumb: restaurant.thumb,
-                full: restaurant.featured_image
-              },
+              img: restaurant.thumb
+                ? restaurant.thumb
+                : restaurant.featured_image,
               cuisines: restaurant.cuisines,
               currency: restaurant.currency,
               costForTwo: restaurant.average_cost_for_two,
@@ -301,7 +281,8 @@ class Root extends Component {
           <div className="App">
             <Search />
             <Switch>
-              <Route exact path="/" component={City} />
+              <Route exact path="/" component={Results} />
+              <Route path="/restaurant/:id" component={Restaurant} />
             </Switch>
           </div>
         </AppContext.Provider>

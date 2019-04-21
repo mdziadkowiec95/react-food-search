@@ -1,0 +1,23 @@
+.link {
+  display: flex;
+  margin-bottom: 1rem;
+  padding: 0.2rem;
+  box-shadow: 0 0 15px #999;
+
+  &:link,
+  &:visited {
+    color: #333;
+  }
+
+  &:hover,
+  &:active {
+    color: #333;
+  }
+}
+
+.top {
+  display: flex;
+  &Texts {
+    padding-left: 1rem;
+  }
+}

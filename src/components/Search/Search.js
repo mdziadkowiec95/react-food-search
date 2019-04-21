@@ -9,6 +9,33 @@ import AppContext from '../../AppContext';
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
 class Search extends React.Component {
+  state = {
+    categories: []
+  };
+
+  componentDidMount() {
+    this.getCategories();
+  }
+
+  getCategories = () => {
+    fetch(`https://developers.zomato.com/api/v2.1/categories`, {
+      method: 'GET',
+      headers: new Headers({
+        'user-key': API_KEY
+      })
+    })
+      .then(data => data.json())
+      .then(res => {
+        console.log(res);
+        this.setState({
+          categories: res.categories
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   render() {
     return (
       <AppContext.Consumer>
@@ -33,7 +60,7 @@ class Search extends React.Component {
                   >
                     <MdNearMe />
                   </button>
-                  {console.log(context)}
+                  {/* {console.log(context)} */}
                   <input
                     type="text"
                     placeholder="Enter city name..."
@@ -46,7 +73,7 @@ class Search extends React.Component {
                   <Select
                     dataType="categories"
                     onChangeFn={context.handleCategoryChange}
-                    items={context.categories}
+                    items={this.state.categories}
                   />
                   <Select
                     dataType="cuisine"
@@ -57,10 +84,10 @@ class Search extends React.Component {
                 <Button submit>Search</Button>
               </form>
             </div>
-            <div>
+            {/* <div>
               {context.restaurants &&
                 context.restaurants.map(item => console.log(item.name))}
-            </div>
+            </div> */}
           </>
         )}
       </AppContext.Consumer>
