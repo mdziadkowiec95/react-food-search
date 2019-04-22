@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import styles from './Root.module.scss';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AppContext from '../../AppContext';
-import Search from '../../components/Search/Search';
 import Results from '../Results/Results';
 import Restaurant from '../Restaurant/Restaurant';
+import { CircleSpinner } from 'react-spinners-kit';
 import { debounce } from 'underscore';
 
 import { restaurantsTEST } from '../../testData';
@@ -15,11 +16,12 @@ class Root extends Component {
     super(props);
 
     this.state = {
+      globalLoader: false,
       geolocationCoords: {},
       queryCity: '',
       cityData: {},
-      // restaurants: [],
-      restaurants: restaurantsTEST,
+      restaurants: [],
+      // restaurants: restaurantsTEST,
       cuisines: [],
       categories: [],
       categoryID: '',
@@ -197,7 +199,7 @@ class Root extends Component {
     }
   };
 
-  handleFormSubmit = e => {
+  handleFormSubmit = (e, history) => {
     e.preventDefault();
 
     if (
@@ -206,6 +208,7 @@ class Root extends Component {
         this.state.cityData.constructor === Object
       )
     ) {
+      history.push('/');
       this.sendSearchRequest();
     } else {
       this.getCityData();
@@ -213,6 +216,10 @@ class Root extends Component {
   };
 
   sendSearchRequest = () => {
+    this.setState({
+      globalLoader: true
+    });
+
     const cuisineQuery = this.state.cuisineID
       ? `&cuisines=${this.state.cuisineID}`
       : '';
@@ -264,7 +271,8 @@ class Root extends Component {
 
           if (restaurantsArr.length > 0) {
             this.setState({
-              restaurants: restaurantsArr
+              restaurants: restaurantsArr,
+              globalLoader: false
             });
           }
         })
@@ -279,11 +287,17 @@ class Root extends Component {
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           <div className="App">
-            <Search />
             <Switch>
               <Route exact path="/" component={Results} />
               <Route path="/restaurant/:id" component={Restaurant} />
             </Switch>
+            <div className={styles.globalSpinner}>
+              <CircleSpinner
+                size={60}
+                color="#e67e22"
+                loading={this.state.globalLoader}
+              />
+            </div>
           </div>
         </AppContext.Provider>
       </BrowserRouter>

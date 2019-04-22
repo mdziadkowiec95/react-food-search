@@ -3,21 +3,31 @@
   margin-bottom: 1rem;
   padding: 0.2rem;
   box-shadow: 0 0 15px #999;
+  border-radius: 5px;
+  transition: opacity 0.25s, border-color 0.25s;
 
   &:link,
   &:visited {
     color: #333;
+    border: 1px solid transparent;
   }
 
   &:hover,
   &:active {
+    opacity: 0.8;
     color: #333;
+    border-color: #e67e22;
   }
 }
 
 .top {
   display: flex;
+
   &Texts {
     padding-left: 1rem;
+  }
+
+  &Img {
+    // border-radius: 5px;
   }
 }

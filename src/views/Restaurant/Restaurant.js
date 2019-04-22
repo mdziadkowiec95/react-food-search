@@ -1,10 +1,12 @@
 import React from 'react';
-import Card from '../../components/Card/Card';
 import AppContext from '../../AppContext';
+import Search from '../../components/Search/Search';
+import Details from '../../components/Details/Details';
 
 const Restaurant = props => (
   <div>
-    <h2>restaurant view</h2>
+    <Search history={props.history} />
+    <Details id={props.match.params.id} />
   </div>
 );
 

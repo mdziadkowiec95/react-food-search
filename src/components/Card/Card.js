@@ -18,8 +18,6 @@ const Card = ({
   ratingText,
   votes
 }) => {
-  console.log(img);
-  console.log(thumbPlaceholder);
   const thumbImg = img ? img : thumbPlaceholder;
 
   return (

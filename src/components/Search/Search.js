@@ -9,9 +9,16 @@ import AppContext from '../../AppContext';
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
 class Search extends React.Component {
-  state = {
-    categories: []
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      categories: []
+    };
+  }
+  // state = {
+  //   categories: []
+  // };
 
   componentDidMount() {
     this.getCategories();
@@ -37,6 +44,7 @@ class Search extends React.Component {
   };
 
   render() {
+    // console.log(this.props.history);
     return (
       <AppContext.Consumer>
         {context => (
@@ -46,7 +54,7 @@ class Search extends React.Component {
                 method="POST"
                 action=""
                 className={styles.form}
-                onSubmit={context.handleFormSubmit}
+                onSubmit={e => context.handleFormSubmit(e, this.props.history)}
               >
                 <div className={styles.JSON}>
                   {/* {JSON.stringify(this.state, null, 0)} */}
