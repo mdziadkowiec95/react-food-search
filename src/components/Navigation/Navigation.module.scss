@@ -1,0 +1,8 @@
+.nav {
+  &Link {
+    &:link,
+    &:visited {
+      color: #333;
+    }
+  }
+}

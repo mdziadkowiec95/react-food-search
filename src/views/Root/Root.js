@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import styles from './Root.module.scss';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import AppContext from '../../AppContext';
+import Navigation from '../../components/Navigation/Navigation';
 import Results from '../Results/Results';
 import Restaurant from '../Restaurant/Restaurant';
+import SignUpView from '../SignUpView/SignUpView';
 import { CircleSpinner } from 'react-spinners-kit';
 import { debounce } from 'underscore';
 
@@ -274,6 +276,11 @@ class Root extends Component {
               restaurants: restaurantsArr,
               globalLoader: false
             });
+          } else {
+            this.setState({
+              globalLoader: false
+            });
+            alert('Brak dopasowań... :-(');
           }
         })
         .catch(err => {
@@ -287,8 +294,10 @@ class Root extends Component {
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           <div className="App">
+            <Navigation />
             <Switch>
               <Route exact path="/" component={Results} />
+              <Route path="/sign-up" component={SignUpView} />
               <Route path="/restaurant/:id" component={Restaurant} />
             </Switch>
             <div className={styles.globalSpinner}>
