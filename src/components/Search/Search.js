@@ -21,27 +21,8 @@ class Search extends React.Component {
   // };
 
   componentDidMount() {
-    this.getCategories();
+    // if (this.state.categories.length === 0) this.getCategories();
   }
-
-  getCategories = () => {
-    fetch(`https://developers.zomato.com/api/v2.1/categories`, {
-      method: 'GET',
-      headers: new Headers({
-        'user-key': API_KEY
-      })
-    })
-      .then(data => data.json())
-      .then(res => {
-        console.log(res);
-        this.setState({
-          categories: res.categories
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
 
   render() {
     // console.log(this.props.history);
@@ -81,7 +62,7 @@ class Search extends React.Component {
                   <Select
                     dataType="categories"
                     onChangeFn={context.handleCategoryChange}
-                    items={this.state.categories}
+                    items={context.categories}
                   />
                   <Select
                     dataType="cuisine"

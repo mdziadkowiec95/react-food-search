@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import styles from './Root.module.scss';
 import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
+import { withFirebase } from '../../components/Firebase';
 import AppContext from '../../AppContext';
+import { withAuthentication } from '../../components/Session';
 import Navigation from '../../components/Navigation/Navigation';
 import Results from '../Results/Results';
 import Restaurant from '../Restaurant/Restaurant';
 import SignUpView from '../SignUpView/SignUpView';
+import SignInView from '../SignInView/SignInView';
+import PasswordForgetView from '../PasswordForgetView/PasswordForgetView';
 import { CircleSpinner } from 'react-spinners-kit';
 import { debounce } from 'underscore';
 
@@ -18,6 +22,7 @@ class Root extends Component {
     super(props);
 
     this.state = {
+      authUser: null,
       globalLoader: false,
       geolocationCoords: {},
       queryCity: '',
@@ -34,6 +39,20 @@ class Root extends Component {
       handleFormSubmit: this.handleFormSubmit,
       getGeolocation: this.getGeolocation
     };
+  }
+
+  componentDidMount() {
+    this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
+      authUser
+        ? this.setState({ authUser })
+        : this.setState({ authUser: null });
+    });
+
+    this.getCategories();
+  }
+
+  componentWillUnmount() {
+    this.listener();
   }
 
   getGeolocation = () => {
@@ -175,6 +194,25 @@ class Root extends Component {
     }
   };
 
+  getCategories = () => {
+    fetch(`https://developers.zomato.com/api/v2.1/categories`, {
+      method: 'GET',
+      headers: new Headers({
+        'user-key': API_KEY
+      })
+    })
+      .then(data => data.json())
+      .then(res => {
+        console.log(res);
+        this.setState({
+          categories: res.categories
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   getCuisines = () => {
     if (this.state.cityData.id) {
       fetch(
@@ -298,6 +336,8 @@ class Root extends Component {
             <Switch>
               <Route exact path="/" component={Results} />
               <Route path="/sign-up" component={SignUpView} />
+              <Route path="/sign-in" component={SignInView} />
+              <Route path="/password-forget" component={PasswordForgetView} />
               <Route path="/restaurant/:id" component={Restaurant} />
             </Switch>
             <div className={styles.globalSpinner}>
@@ -314,4 +354,4 @@ class Root extends Component {
   }
 }
 
-export default Root;
+export default withAuthentication(Root);

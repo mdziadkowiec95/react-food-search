@@ -1,4 +1,13 @@
 .nav {
+  &List {
+    display: flex;
+    justify-content: center;
+  }
+
+  &Item {
+    margin: 0 0.7rem;
+  }
+
   &Link {
     &:link,
     &:visited {
