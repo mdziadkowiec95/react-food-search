@@ -27,10 +27,15 @@ const NavigationAuth = props => (
         </Link>
       </li>
       <li className={styles.navItem}>
+        <Link to="/account" className={styles.navLink}>
+          Account
+        </Link>
+      </li>
+      {/* <li className={styles.navItem}>
         <Link to="/sign-in" className={styles.navLink}>
           Sign In
         </Link>
-      </li>
+      </li> */}
       <li className={styles.navItem}>
         <SignOutButton />
       </li>
@@ -49,6 +54,11 @@ const NavigationNonAuth = props => (
       <li className={styles.navItem}>
         <Link to="/sign-up" className={styles.navLink}>
           Sign Up
+        </Link>
+      </li>
+      <li className={styles.navItem}>
+        <Link to="/account" className={styles.navLink}>
+          Account
         </Link>
       </li>
       <li className={styles.navItem}>

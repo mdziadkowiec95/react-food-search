@@ -38,20 +38,23 @@ class PasswordForgetFormBase extends React.Component {
     const isInvalid = email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="email"
-          value={this.state.email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <button disabled={isInvalid} type="submit">
-          Reset My Password
-        </button>
+      <>
+        <h2>Reset your password</h2>
+        <form onSubmit={this.onSubmit}>
+          <input
+            name="email"
+            value={this.state.email}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Email Address"
+          />
+          <button disabled={isInvalid} type="submit">
+            Reset My Password
+          </button>
 
-        {error && <p>{error.message}</p>}
-      </form>
+          {error && <p>{error.message}</p>}
+        </form>
+      </>
     );
   }
 }

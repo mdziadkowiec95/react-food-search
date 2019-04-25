@@ -9,6 +9,7 @@ import Results from '../Results/Results';
 import Restaurant from '../Restaurant/Restaurant';
 import SignUpView from '../SignUpView/SignUpView';
 import SignInView from '../SignInView/SignInView';
+import AccountView from '../AccountView/AccountView';
 import PasswordForgetView from '../PasswordForgetView/PasswordForgetView';
 import { CircleSpinner } from 'react-spinners-kit';
 import { debounce } from 'underscore';
@@ -337,6 +338,7 @@ class Root extends Component {
               <Route exact path="/" component={Results} />
               <Route path="/sign-up" component={SignUpView} />
               <Route path="/sign-in" component={SignInView} />
+              <Route path="/account" component={AccountView} />
               <Route path="/password-forget" component={PasswordForgetView} />
               <Route path="/restaurant/:id" component={Restaurant} />
             </Switch>

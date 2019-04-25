@@ -1,4 +1,12 @@
 .nav {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 0 5px #aaa;
+
   &List {
     display: flex;
     justify-content: center;
