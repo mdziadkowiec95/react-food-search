@@ -29,32 +29,76 @@ class Root extends Component {
       queryCity: '',
       cityData: {},
       restaurants: [],
-      // restaurants: restaurantsTEST,
+      restaurants: restaurantsTEST,
       cuisines: [],
       categories: [],
       categoryID: '',
       cuisineID: '',
+      favList: [],
       handleCityChange: this.handleCityChange,
       handleCategoryChange: this.handleCategoryChange,
       handleCuisineChange: this.handleCuisineChange,
       handleFormSubmit: this.handleFormSubmit,
-      getGeolocation: this.getGeolocation
+      getGeolocation: this.getGeolocation,
+      isFav: this.isFav
     };
   }
 
   componentDidMount() {
-    this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
-      authUser
-        ? this.setState({ authUser })
-        : this.setState({ authUser: null });
-    });
+    // *** Authorization listener ***
+    this.listenerAuth = this.props.firebase.auth.onAuthStateChanged(
+      authUser => {
+        authUser
+          ? this.setState({ authUser }, this.runFavoritesListener)
+          : this.setState({ authUser: null });
+      }
+    );
 
     this.getCategories();
   }
 
   componentWillUnmount() {
-    this.listener();
+    this.listenerAuth();
+    this.listenerFavorites();
   }
+
+  runFavoritesListener = () => {
+    // *** Favorites listener ***
+
+    this.listenerFavorites = this.props.firebase
+      .favorites()
+      .on('value', snapshot => {
+        const favObject = snapshot.val();
+        const userFavItems = favObject[this.state.authUser.uid];
+        let favListArr = [];
+
+        if (userFavItems) {
+          const userFavItemsKeys = Object.keys(
+            favObject[this.state.authUser.uid]
+          );
+          // Create favList array with favorite items
+          userFavItemsKeys.map(key => {
+            favListArr.push({
+              uniqueID: key,
+              favID: userFavItems[key].favID
+            });
+          });
+
+          console.log(favListArr);
+
+          this.setState({
+            favList: favListArr,
+            loading: false
+          });
+        } else {
+          alert('undefined');
+          this.setState({
+            favList: [],
+            loading: false
+          });
+        }
+      });
+  };
 
   getGeolocation = () => {
     if (navigator.geolocation) {
@@ -291,6 +335,7 @@ class Root extends Component {
           console.log(res);
           const restaurantsArr = res.restaurants.map(item => {
             const restaurant = item.restaurant;
+
             return {
               id: restaurant.id,
               name: restaurant.name,
@@ -326,6 +371,14 @@ class Root extends Component {
           console.log(err);
         });
     }
+  };
+
+  isFav = id => {
+    const index = this.state.favList.findIndex(el => el.favID === id);
+    const isFav = index !== -1 ? true : false;
+
+    // console.log(isFav);
+    return isFav;
   };
 
   render() {

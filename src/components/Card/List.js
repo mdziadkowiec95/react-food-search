@@ -19,9 +19,7 @@ class List extends React.Component {
       <div className={styles.wrapper}>
         <ul className={styles.list}>
           {items.map(item => (
-            <li key={item.id}>
-              <Card {...item} />
-            </li>
+            <Card key={item.id} {...item} />
           ))}
         </ul>
       </div>

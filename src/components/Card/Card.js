@@ -21,22 +21,24 @@ const Card = ({
   const thumbImg = img ? img : thumbPlaceholder;
 
   return (
-    <Link to={`/restaurant/${id}`} className={styles.link}>
-      <div className={styles.top}>
-        <div className={styles.topThumb}>
-          <img src={thumbImg} alt="image" className={styles.topImg} />
+    <li>
+      <Link to={`/restaurant/${id}`} className={styles.link}>
+        <div className={styles.top}>
+          <div className={styles.topThumb}>
+            <img src={thumbImg} alt="image" className={styles.topImg} />
+          </div>
+          <div className={styles.topTexts}>
+            <h3 className={styles.name}>{name}</h3>
+            <p className={styles.area}>{area}</p>
+            <p>
+              Cost for two: {costForTwo} {currency}
+            </p>
+            <p>Cuisines: {cuisines}</p>
+          </div>
         </div>
-        <div className={styles.topTexts}>
-          <h3 className={styles.name}>{name}</h3>
-          <p className={styles.area}>{area}</p>
-          <p>
-            Cost for two: {costForTwo} {currency}
-          </p>
-          <p>Cuisines: {cuisines}</p>
-        </div>
-      </div>
-      <div className={styles.bottom} />
-    </Link>
+        <div className={styles.bottom} />
+      </Link>
+    </li>
   );
 };
 
