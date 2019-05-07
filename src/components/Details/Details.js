@@ -1,6 +1,8 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
+import Favorites from '../Favorites';
 import AppContext from '../../AppContext';
 import styles from './Details.module.scss';
 
@@ -11,12 +13,67 @@ class DetailsBase extends React.Component {
     super(props);
 
     this.state = {
-      isFav: null
+      favList: [],
+      isFav: null,
+      uniqueID: ''
     };
   }
 
   componentDidMount() {
     this.getRestaurantDetails();
+
+    this.props.firebase.favorites().on('value', snapshot => {
+      const favObject = snapshot.val();
+
+      console.log(favObject);
+
+      if (favObject) {
+        const userFavItems = favObject[this.props.authUser.uid];
+        let favListArr = [];
+
+        if (userFavItems) {
+          const userFavItemsKeys = Object.keys(
+            favObject[this.props.authUser.uid]
+          );
+          // Create favList array with favorite items
+          userFavItemsKeys.map(key => {
+            favListArr.push({
+              uniqueID: key,
+              favID: userFavItems[key].favID
+            });
+          });
+
+          console.log(favListArr);
+
+          this.setState(
+            {
+              favList: favListArr,
+              loading: false
+            },
+            this.checkFavoriteStatus
+          );
+        } else {
+          alert('undefined');
+          this.setState({
+            favList: [],
+            loading: false,
+            isFav: false,
+            uniqueID: null
+          });
+        }
+      } else {
+        this.setState({
+          favList: [],
+          loading: false,
+          isFav: false,
+          uniqueID: null
+        });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.firebase.favorites().off();
   }
 
   getRestaurantDetails() {
@@ -34,39 +91,69 @@ class DetailsBase extends React.Component {
       .then(data => data.json())
       .then(res => {
         console.log(res);
-        this.setState(
-          {
-            details: res
-          },
-          this.checkFavoriteStatus
-        );
+        this.setState({
+          details: res
+        });
       })
       .catch(err => {
         console.log(err);
       });
   }
 
+  checkFavStatus = id => {
+    console.log(this.state);
+    if (this.state.favList.length > 0) {
+      const index = this.state.favList.findIndex(el => el.favID === id);
+      const isFav = index !== -1 ? true : false;
+
+      console.log(isFav);
+
+      return {
+        isFav: isFav,
+        uniqueID: isFav ? this.state.favList[index].uniqueID : null
+      };
+    } else {
+      return {
+        isFav: false,
+        uniqueID: null
+      };
+    }
+  };
+
   checkFavoriteStatus = () => {
-    const isFavStatus = this.props.isFavFn(this.props.id);
+    const isFavStatus = this.checkFavStatus(this.props.id);
 
     this.setState({
-      isFav: isFavStatus
+      ...isFavStatus
     });
   };
 
-  handleToggleFavorite = (event, authUser) => {
+  handleToggleFavorite = (event, authUser, isFav) => {
     event.preventDefault();
-    const { name, location, thumb } = this.state.details;
 
-    const img = thumb ? thumb : '';
+    if (!isFav) {
+      const { name, location, thumb } = this.state.details;
 
-    // push new fav item to database
-    this.props.firebase.favorite(authUser.uid).push({
-      favID: this.props.id,
-      name: name,
-      city: location.city,
-      img: img
-    });
+      const img = thumb ? thumb : '';
+
+      // push new fav item to database
+      this.props.firebase.favorite(authUser.uid).push({
+        favID: this.props.id,
+        name: name,
+        city: location.city,
+        img: img
+      });
+    } else {
+      this.props.firebase
+        .favorite(authUser.uid)
+        .child(this.state.uniqueID)
+        .remove();
+
+      this.setState({
+        isFav: false,
+        uniqueID: null
+      });
+    }
   };
 
   render() {
@@ -77,13 +164,16 @@ class DetailsBase extends React.Component {
         {this.state.isFav === null ? (
           <h4>loading...</h4>
         ) : (
-          <h4>{this.state.isFav ? 'Remove from fav' : 'Add to favorites'}</h4>
+          <button
+            onClick={event =>
+              this.handleToggleFavorite(event, authUser, this.state.isFav)
+            }
+          >
+            {this.state.isFav ? 'Unlike' : 'Like'}
+          </button>
         )}
         <hr />
         <div>{this.props.id}</div>
-        <button onClick={event => this.handleToggleFavorite(event, authUser)}>
-          Like
-        </button>
       </>
     );
   }
@@ -99,6 +189,7 @@ const Details = props => (
           <DetailsFb
             authUser={authUser}
             id={props.id}
+            favListChecked={context.favListChecked}
             isFavFn={context.isFav}
           />
         )}
