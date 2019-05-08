@@ -5,7 +5,7 @@ import { withFirebase } from '../../components/Firebase';
 import AppContext from '../../AppContext';
 import { withAuthentication } from '../../components/Session';
 import Navigation from '../../components/Navigation/Navigation';
-import Favorites from '../../components/Favorites';
+import Sidebar from '../../components/Sidebar/Sidebar';
 import Results from '../Results/Results';
 import Restaurant from '../Restaurant/Restaurant';
 import SignUpView from '../SignUpView/SignUpView';
@@ -36,11 +36,13 @@ class Root extends Component {
       categoryID: '',
       cuisineID: '',
       favList: [],
+      sidebarOpen: false,
       handleCityChange: this.handleCityChange,
       handleCategoryChange: this.handleCategoryChange,
       handleCuisineChange: this.handleCuisineChange,
       handleFormSubmit: this.handleFormSubmit,
-      getGeolocation: this.getGeolocation
+      getGeolocation: this.getGeolocation,
+      handleToggleSidebar: this.handleToggleSidebar
     };
   }
 
@@ -339,12 +341,21 @@ class Root extends Component {
     }
   };
 
+  handleToggleSidebar = () => {
+    if (!this.state.sidebarOpen) {
+      this.setState({ sidebarOpen: true });
+    } else {
+      this.setState({ sidebarOpen: false });
+    }
+  };
+
   render() {
     return (
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           <div className="App">
             <Navigation />
+            {this.state.sidebarOpen && <Sidebar />}
             <Switch>
               <Route exact path="/" component={Results} />
               <Route path="/sign-up" component={SignUpView} />

@@ -2,7 +2,6 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
-import Favorites from '../Favorites';
 import AppContext from '../../AppContext';
 import styles from './Details.module.scss';
 
@@ -22,10 +21,18 @@ class DetailsBase extends React.Component {
   componentDidMount() {
     this.getRestaurantDetails();
 
-    this.props.firebase.favorites().on('value', snapshot => {
-      const favObject = snapshot.val();
+    if (this.props.authUser) {
+      this.checkFavCollection();
+    }
+  }
 
-      console.log(favObject);
+  componentWillUnmount() {
+    this.props.firebase.favorites().off();
+  }
+
+  checkFavCollection() {
+    this.props.firebase.favorites().once('value', snapshot => {
+      const favObject = snapshot.val();
 
       if (favObject) {
         const userFavItems = favObject[this.props.authUser.uid];
@@ -70,10 +77,6 @@ class DetailsBase extends React.Component {
         });
       }
     });
-  }
-
-  componentWillUnmount() {
-    this.props.firebase.favorites().off();
   }
 
   getRestaurantDetails() {
@@ -143,6 +146,8 @@ class DetailsBase extends React.Component {
         city: location.city,
         img: img
       });
+
+      this.checkFavCollection();
     } else {
       this.props.firebase
         .favorite(authUser.uid)
@@ -159,23 +164,34 @@ class DetailsBase extends React.Component {
   render() {
     const { id, authUser } = this.props;
 
-    return (
-      <>
-        {this.state.isFav === null ? (
-          <h4>loading...</h4>
-        ) : (
-          <button
-            onClick={event =>
-              this.handleToggleFavorite(event, authUser, this.state.isFav)
-            }
-          >
-            {this.state.isFav ? 'Unlike' : 'Like'}
-          </button>
-        )}
-        <hr />
-        <div>{this.props.id}</div>
-      </>
-    );
+    if (!authUser) {
+      return (
+        <>
+          <h4>Sign in to like the restaurant</h4>
+        </>
+      );
+    }
+
+    if (authUser) {
+      return (
+        <>
+          {this.state.isFav === null ? (
+            <h4>loading...</h4>
+          ) : (
+            <button
+              onClick={event =>
+                this.handleToggleFavorite(event, authUser, this.state.isFav)
+              }
+            >
+              {this.state.isFav ? 'Unlike' : 'Like'}
+            </button>
+          )}
+          <hr />
+        </>
+      );
+    }
+
+    return <div>{this.props.id}asfasf</div>;
   }
 }
 
@@ -183,18 +199,7 @@ const DetailsFb = withFirebase(DetailsBase);
 
 const Details = props => (
   <AuthUserContext.Consumer>
-    {authUser => (
-      <AppContext.Consumer>
-        {context => (
-          <DetailsFb
-            authUser={authUser}
-            id={props.id}
-            favListChecked={context.favListChecked}
-            isFavFn={context.isFav}
-          />
-        )}
-      </AppContext.Consumer>
-    )}
+    {authUser => <DetailsFb authUser={authUser} id={props.id} />}
   </AuthUserContext.Consumer>
 );
 

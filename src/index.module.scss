@@ -1,4 +1,4 @@
-$primary: pink;
+/* $primary: pink; */
 
 @import url('https://fonts.googleapis.com/css?family=Lato:300,500,700');
 
@@ -48,4 +48,8 @@ input {
     outline: 0;
     border-color: #e67e22;
   }
+}
+
+.container {
+  max-width: 80vw;
 }
