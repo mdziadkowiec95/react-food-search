@@ -4,6 +4,7 @@ import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
 import AppContext from '../../AppContext';
 import styles from './Details.module.scss';
+import thumbPlaceholder from '../../assets/images/thumb-placeholder.jpg';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
@@ -137,7 +138,7 @@ class DetailsBase extends React.Component {
     if (!isFav) {
       const { name, location, thumb } = this.state.details;
 
-      const img = thumb ? thumb : '';
+      const img = thumb ? thumb : thumbPlaceholder;
 
       // push new fav item to database
       this.props.firebase.favorite(authUser.uid).push({

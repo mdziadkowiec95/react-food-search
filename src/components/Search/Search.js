@@ -5,8 +5,12 @@ import Button from '../Button/Button';
 import { MdNearMe } from 'react-icons/md';
 import Select from '../Select/Select';
 import AppContext from '../../AppContext';
+import cities from 'cities.json';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
+
+const citiesEndpoint =
+  'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
 class Search extends React.Component {
   constructor(props) {
@@ -21,6 +25,9 @@ class Search extends React.Component {
   // };
 
   componentDidMount() {
+    const res = fetch(citiesEndpoint)
+      .then(data => data.json())
+      .then(res => console.log(res));
     // if (this.state.categories.length === 0) this.getCategories();
   }
 

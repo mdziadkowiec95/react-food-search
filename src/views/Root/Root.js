@@ -36,7 +36,7 @@ class Root extends Component {
       categoryID: '',
       cuisineID: '',
       favList: [],
-      sidebarOpen: false,
+      sidebarOpen: true,
       handleCityChange: this.handleCityChange,
       handleCategoryChange: this.handleCategoryChange,
       handleCuisineChange: this.handleCuisineChange,
@@ -159,10 +159,14 @@ class Root extends Component {
 
   getCityData = () => {
     if (this.state.queryCity) {
+      const queryNormalized = this.state.queryCity
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace('ł', 'l'); // @toDo --- temporary
+
+      console.log(queryNormalized);
       fetch(
-        `https://developers.zomato.com/api/v2.1/cities?q=${
-          this.state.queryCity
-        }`,
+        `https://developers.zomato.com/api/v2.1/cities?q=${queryNormalized}`,
         {
           method: 'GET',
           headers: new Headers({

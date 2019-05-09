@@ -4,12 +4,15 @@ import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
 import AppContext from '../../AppContext';
 import styles from './Sidebar.module.scss';
+import Item from './Item';
+import { CircleSpinner } from 'react-spinners-kit';
 
 class SidebarBase extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      favListFetched: false,
       favList: []
     };
   }
@@ -45,6 +48,7 @@ class SidebarBase extends React.Component {
 
           this.setState({
             favList: favListArr,
+            favListFetched: true,
             loading: false
           });
         } else {
@@ -68,33 +72,40 @@ class SidebarBase extends React.Component {
   }
 
   render() {
+    const loadingMessage = this.state.favListFetched ? (
+      `There are no favorite items`
+    ) : (
+      <div className={styles.spinner}>
+        <CircleSpinner
+          size={60}
+          color="#e67e22"
+          loading={!this.state.favListFetched}
+        />
+      </div>
+    );
+
     return (
       <aside className={styles.wrapper} onClick={this.props.toggleFn}>
-        <ul>
-          {this.props.authUser && this.state.favList.length > 0 ? (
-            this.state.favList.map(item => (
-              <li key={item.favID}>
-                <Link to={`/restaurant/${item.favID}`}>
-                  <p>{item.name}</p>
-                  <p>{item.city}</p>
-                </Link>
+        <div className={styles.inner}>
+          <ul>
+            {this.props.authUser && this.state.favListFetched ? (
+              this.state.favList.map(item => <Item {...item} />)
+            ) : (
+              <li>
+                {this.props.authUser ? (
+                  loadingMessage
+                ) : (
+                  <>
+                    <p>Sidebar available only for registered users.</p>
+                    <p>
+                      Please <Link to="/sign-in">SIGN IN</Link>
+                    </p>
+                  </>
+                )}
               </li>
-            ))
-          ) : (
-            <li>
-              {this.props.authUser ? (
-                `There aren't any restaraunt liked`
-              ) : (
-                <>
-                  <p>Sidebar available only for registered users.</p>
-                  <p>
-                    Please <Link to="/sign-in">SIGN IN</Link>
-                  </p>
-                </>
-              )}
-            </li>
-          )}
-        </ul>
+            )}
+          </ul>
+        </div>
       </aside>
     );
   }
