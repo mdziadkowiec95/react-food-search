@@ -1,9 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styles from './Navigation.module.scss';
 import SignOutButton from '../SignOutButton/SignOutButton';
 import { AuthUserContext } from '../Session';
 import AppContext from '../../AppContext';
+import { MdMenu, MdChevronLeft } from 'react-icons/md';
+
+const sidebarIconSize = 35;
 
 const Navigation = ({ authUser }) => (
   <>
@@ -12,10 +15,14 @@ const Navigation = ({ authUser }) => (
         <AppContext.Consumer>
           {context =>
             authUser ? (
-              <NavigationAuth toggleSidebarFn={context.handleToggleSidebar} />
+              <NavigationAuth
+                toggleSidebarFn={context.handleToggleSidebar}
+                isSidebarOpen={context.isSidebarOpen}
+              />
             ) : (
               <NavigationNonAuth
                 toggleSidebarFn={context.handleToggleSidebar}
+                isSidebarOpen={context.isSidebarOpen}
               />
             )
           }
@@ -28,23 +35,40 @@ const Navigation = ({ authUser }) => (
 const NavigationAuth = props => (
   <nav className={styles.nav}>
     <button onClick={props.toggleSidebarFn} className={styles.sidebarToggle}>
-      ToggleSidebar
+      {props.isSidebarOpen ? (
+        <MdChevronLeft size={sidebarIconSize} />
+      ) : (
+        <MdMenu size={sidebarIconSize} />
+      )}
     </button>
     <ul className={styles.navList}>
       <li className={styles.navItem}>
-        <Link to="/" className={styles.navLink}>
+        <NavLink
+          exact
+          to="/"
+          activeClassName={styles.navItemLinkActive}
+          className={styles.navItemLink}
+        >
           Home
-        </Link>
+        </NavLink>
       </li>
       <li className={styles.navItem}>
-        <Link to="/sign-up" className={styles.navLink}>
+        <NavLink
+          to="/sign-up"
+          activeClassName={styles.navItemLinkActive}
+          className={styles.navItemLink}
+        >
           Sign Up
-        </Link>
+        </NavLink>
       </li>
       <li className={styles.navItem}>
-        <Link to="/account" className={styles.navLink}>
+        <NavLink
+          to="/account"
+          activeClassName={styles.navItemLinkActive}
+          className={styles.navItemLink}
+        >
           Account
-        </Link>
+        </NavLink>
       </li>
       <li className={styles.navItem}>
         <SignOutButton />
@@ -56,28 +80,49 @@ const NavigationAuth = props => (
 const NavigationNonAuth = props => (
   <nav className={styles.nav}>
     <button onClick={props.toggleSidebarFn} className={styles.sidebarToggle}>
-      ToggleSidebar
+      {props.isSidebarOpen ? (
+        <MdChevronLeft size={sidebarIconSize} />
+      ) : (
+        <MdMenu size={sidebarIconSize} />
+      )}
     </button>
     <ul className={styles.navList}>
       <li className={styles.navItem}>
-        <Link to="/" className={styles.navLink}>
+        <NavLink
+          exact
+          to="/"
+          activeClassName={styles.navItemLinkActive}
+          className={styles.navItemLink}
+        >
           Home
-        </Link>
+        </NavLink>
       </li>
       <li className={styles.navItem}>
-        <Link to="/sign-up" className={styles.navLink}>
+        <NavLink
+          to="/sign-up"
+          activeClassName={styles.navItemLinkActive}
+          className={styles.navItemLink}
+        >
           Sign Up
-        </Link>
+        </NavLink>
       </li>
       <li className={styles.navItem}>
-        <Link to="/account" className={styles.navLink}>
+        <NavLink
+          to="/account"
+          activeClassName={styles.navItemLinkActive}
+          className={styles.navItemLink}
+        >
           Account
-        </Link>
+        </NavLink>
       </li>
       <li className={styles.navItem}>
-        <Link to="/sign-in" className={styles.navLink}>
+        <NavLink
+          to="/sign-in"
+          activeClassName={styles.navItemLinkActive}
+          className={styles.navItemLink}
+        >
           Sign In
-        </Link>
+        </NavLink>
       </li>
     </ul>
   </nav>

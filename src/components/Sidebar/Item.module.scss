@@ -1,14 +1,55 @@
+@import '../../scss/variables';
+
 .item {
-  padding: 0.8rem;
 }
 
 .link {
   display: flex;
   align-items: center;
+  position: relative;
+  padding: 0.8rem;
+  transition: all 0.25s;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    transition: all 0.25s;
+  }
+
+  &::before {
+    right: 0;
+    height: 100%;
+    width: 0;
+    border-top: 1px solid $color-primary;
+    border-bottom: 1px solid $color-primary;
+  }
+
+  &::after {
+    right: 0;
+    height: 0;
+    width: 5px;
+  }
 
   &:link,
   &:visited {
     color: #333;
+  }
+
+  &:hover,
+  &:active {
+    opacity: 0.8;
+
+    &::before {
+      width: 100%;
+    }
+
+    &::after {
+      height: 100%;
+      background-color: $color-primary;
+    }
   }
 }
 

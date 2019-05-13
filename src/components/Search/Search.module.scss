@@ -37,12 +37,13 @@
   }
 }
 
-.btnLocation {
+.btnGeolocation {
   position: relative;
   display: inline-block;
   padding: 4px;
   width: 40px;
   height: 40px;
+  background: #fff;
   border: solid 1px transparent;
   border-radius: 5px 0 0 5px;
   color: #3464b1;
@@ -55,7 +56,22 @@
   cursor: pointer;
   transition: all 0.25s;
 
+  &Loader {
+    display: block;
+    animation: spinner 1s linear infinite;
+  }
+
   &:hover {
     opacity: 0.8;
+  }
+}
+
+@keyframes spinner {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }

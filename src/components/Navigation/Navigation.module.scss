@@ -1,3 +1,5 @@
+@import '../../scss/variables';
+
 .nav {
   position: fixed;
   z-index: 1000;
@@ -10,22 +12,44 @@
   &List {
     display: flex;
     justify-content: center;
+    align-self: center;
+    margin: 0;
   }
 
   &Item {
     margin: 0 0.7rem;
-  }
+    padding: 20px;
 
-  &Link {
-    &:link,
-    &:visited {
-      color: #333;
+    &Link {
+      &:link,
+      &:visited {
+        padding: 20px;
+        height: 100%;
+        color: #333;
+        transition: all 0.25s;
+      }
+
+      &Active {
+        background-color: $color-primary;
+
+        &:link,
+        &:visited {
+          color: #fff;
+        }
+      }
     }
   }
 }
 
 .sidebarToggle {
   position: fixed;
-  top: 20px;
+  top: 10px;
   left: 30px;
+  cursor: pointer;
+  transition: opacity 0.25s;
+
+  &:hover,
+  &:active {
+    opacity: 0.8;
+  }
 }

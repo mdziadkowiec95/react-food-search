@@ -26,6 +26,7 @@ class Root extends Component {
     this.state = {
       authUser: null,
       globalLoader: false,
+      loadingGeolocation: false,
       geolocationCoords: {},
       queryCity: '',
       cityData: {},
@@ -36,7 +37,7 @@ class Root extends Component {
       categoryID: '',
       cuisineID: '',
       favList: [],
-      sidebarOpen: true,
+      isSidebarOpen: false,
       handleCityChange: this.handleCityChange,
       handleCategoryChange: this.handleCategoryChange,
       handleCuisineChange: this.handleCuisineChange,
@@ -70,6 +71,10 @@ class Root extends Component {
 
   getGeolocation = () => {
     if (navigator.geolocation) {
+      this.setState({
+        loadingGeolocation: true
+      });
+
       const watcher = navigator.geolocation.getCurrentPosition(
         this.displayLocationInfo,
         this.handleLocationError
@@ -93,7 +98,8 @@ class Root extends Component {
     if (error.code) {
       this.setState({
         geolocationCoords: {},
-        geoErrorMessage: error.message
+        geoErrorMessage: error.message,
+        loadingGeolocation: false
       });
     }
   };
@@ -117,7 +123,8 @@ class Root extends Component {
           cityData: {
             name: res.location.city_name,
             id: res.location.city_id
-          }
+          },
+          loadingGeolocation: false
         });
       })
       .catch(err => {
@@ -346,10 +353,10 @@ class Root extends Component {
   };
 
   handleToggleSidebar = () => {
-    if (!this.state.sidebarOpen) {
-      this.setState({ sidebarOpen: true });
+    if (!this.state.isSidebarOpen) {
+      this.setState({ isSidebarOpen: true });
     } else {
-      this.setState({ sidebarOpen: false });
+      this.setState({ isSidebarOpen: false });
     }
   };
 
@@ -359,7 +366,7 @@ class Root extends Component {
         <AppContext.Provider value={this.state}>
           <div className="App">
             <Navigation />
-            {this.state.sidebarOpen && <Sidebar />}
+            {this.state.isSidebarOpen && <Sidebar />}
             <Switch>
               <Route exact path="/" component={Results} />
               <Route path="/sign-up" component={SignUpView} />

@@ -7,26 +7,50 @@ import styles from './Sidebar.module.scss';
 import Item from './Item';
 import { CircleSpinner } from 'react-spinners-kit';
 
+const favListTEST = [
+  {
+    city: 'Kraków',
+    favID: '10401007',
+    img: '/static/media/thumb-placeholder.73058276.jpg',
+    name: 'Pod Wawelem Kompania Kuflowa'
+  },
+  {
+    city: 'Kraków',
+    favID: '10401007',
+    img: '/static/media/thumb-placeholder.73058276.jpg',
+    name: 'Pod Wawelem Kompania Kuflowa'
+  },
+  {
+    city: 'Kraków',
+    favID: '10401007',
+    img: '/static/media/thumb-placeholder.73058276.jpg',
+    name: 'Pod Wawelem Kompania Kuflowa'
+  }
+];
+
 class SidebarBase extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       favListFetched: false,
-      favList: []
+      favList: [] /** [...favListTEST] for test purposes */
     };
   }
 
   componentDidMount() {
-    console.log(this.props);
-    if (this.props.authUser) this.checkFavCollection();
+    this.checkFavCollection(); /** turn off for test purposesc */
   }
+
+  componentWillReceiveProps = ({ authUser }) => {
+    if (authUser) this.checkFavCollection(); /** turn off for test purposesc */
+  };
 
   checkFavCollection() {
     this.props.firebase.favorites().on('value', snapshot => {
       const favObject = snapshot.val();
 
-      if (favObject) {
+      if (favObject && this.props.authUser) {
         const userFavItems = favObject[this.props.authUser.uid];
         let favListArr = [];
 

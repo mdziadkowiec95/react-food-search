@@ -2,10 +2,10 @@ import React from 'react';
 import styles from './Search.module.scss';
 import cn from 'classnames';
 import Button from '../Button/Button';
-import { MdNearMe } from 'react-icons/md';
+import { MdNearMe, MdCached } from 'react-icons/md';
 import Select from '../Select/Select';
 import AppContext from '../../AppContext';
-import cities from 'cities.json';
+// import cities from 'cities.json';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
@@ -25,9 +25,9 @@ class Search extends React.Component {
   // };
 
   componentDidMount() {
-    const res = fetch(citiesEndpoint)
-      .then(data => data.json())
-      .then(res => console.log(res));
+    // const res = fetch(citiesEndpoint)
+    //   .then(data => data.json())
+    //   .then(res => console.log(res));
     // if (this.state.categories.length === 0) this.getCategories();
   }
 
@@ -52,9 +52,15 @@ class Search extends React.Component {
                   <button
                     type="button"
                     onClick={context.getGeolocation}
-                    className={styles.btnLocation}
+                    className={styles.btnGeolocation}
                   >
-                    <MdNearMe />
+                    {!context.loadingGeolocation ? (
+                      <MdNearMe />
+                    ) : (
+                      <span className={styles.btnGeolocationLoader}>
+                        <MdCached />
+                      </span>
+                    )}
                   </button>
                   {/* {console.log(context)} */}
                   <input
