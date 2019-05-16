@@ -4,6 +4,7 @@ import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
 import AppContext from '../../AppContext';
 import styles from './Sidebar.module.scss';
+import List from './List';
 import Item from './Item';
 import { CircleSpinner } from 'react-spinners-kit';
 
@@ -33,20 +34,21 @@ class SidebarBase extends React.Component {
     super(props);
 
     this.state = {
-      favListFetched: false,
-      favList: [] /** [...favListTEST] for test purposes */
+      favListFetched: true,
+      favList: [...favListTEST] /** [...favListTEST] for test purposes */
     };
   }
 
   componentDidMount() {
-    this.checkFavCollection(); /** turn off for test purposesc */
+    // if (this.props.authUser) this.checkFavCollection(); /** turn off for test purposesc */
   }
 
   componentWillReceiveProps = ({ authUser }) => {
-    if (authUser) this.checkFavCollection(); /** turn off for test purposesc */
+    // if (authUser) this.checkFavCollection(); /** turn off for test purposesc */
   };
 
   checkFavCollection() {
+    // alert();
     this.props.firebase.favorites().on('value', snapshot => {
       const favObject = snapshot.val();
 
@@ -111,24 +113,22 @@ class SidebarBase extends React.Component {
     return (
       <aside className={styles.wrapper} onClick={this.props.toggleFn}>
         <div className={styles.inner}>
-          <ul>
-            {this.props.authUser && this.state.favListFetched ? (
-              this.state.favList.map(item => <Item {...item} />)
-            ) : (
-              <li>
-                {this.props.authUser ? (
-                  loadingMessage
-                ) : (
-                  <>
-                    <p>Sidebar available only for registered users.</p>
-                    <p>
-                      Please <Link to="/sign-in">SIGN IN</Link>
-                    </p>
-                  </>
-                )}
-              </li>
-            )}
-          </ul>
+          {this.props.authUser && this.state.favListFetched ? (
+            <List items={this.state.favList} />
+          ) : (
+            <h3>
+              {this.props.authUser ? (
+                loadingMessage
+              ) : (
+                <>
+                  <p>Sidebar available only for registered users.</p>
+                  <p>
+                    Please <Link to="/sign-in">SIGN IN</Link>
+                  </p>
+                </>
+              )}
+            </h3>
+          )}
         </div>
       </aside>
     );

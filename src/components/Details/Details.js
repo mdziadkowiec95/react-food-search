@@ -5,6 +5,9 @@ import { withFirebase } from '../Firebase';
 import AppContext from '../../AppContext';
 import styles from './Details.module.scss';
 import thumbPlaceholder from '../../assets/images/thumb-placeholder.jpg';
+import LikeButton from './LikeButton';
+import Spinner from '../Base/Spinner';
+import { CircleSpinner } from 'react-spinners-kit';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
@@ -132,7 +135,8 @@ class DetailsBase extends React.Component {
     });
   };
 
-  handleToggleFavorite = (event, authUser, isFav) => {
+  handleToggleFavorite = (event, isFav) => {
+    const { firebase, authUser, id } = this.props;
     event.preventDefault();
 
     if (!isFav) {
@@ -141,8 +145,8 @@ class DetailsBase extends React.Component {
       const img = thumb ? thumb : thumbPlaceholder;
 
       // push new fav item to database
-      this.props.firebase.favorite(authUser.uid).push({
-        favID: this.props.id,
+      firebase.favorite(authUser.uid).push({
+        favID: id,
         name: name,
         city: location.city,
         img: img
@@ -150,7 +154,7 @@ class DetailsBase extends React.Component {
 
       this.checkFavCollection();
     } else {
-      this.props.firebase
+      firebase
         .favorite(authUser.uid)
         .child(this.state.uniqueID)
         .remove();
@@ -177,15 +181,22 @@ class DetailsBase extends React.Component {
       return (
         <>
           {this.state.isFav === null ? (
-            <h4>loading...</h4>
+            <Spinner
+              className={styles.spinner}
+              loading={!this.state.favListFetched}
+            />
           ) : (
-            <button
-              onClick={event =>
-                this.handleToggleFavorite(event, authUser, this.state.isFav)
-              }
-            >
-              {this.state.isFav ? 'Unlike' : 'Like'}
-            </button>
+            // <div className={styles.spinner}>
+            //   <CircleSpinner
+            //     size={60}
+            //     color="#e67e22"
+            //     loading={!this.state.favListFetched}
+            //   />
+            // </div>
+            <LikeButton
+              isFav={this.state.isFav}
+              toggleIsFavFn={this.handleToggleFavorite}
+            />
           )}
           <hr />
         </>
