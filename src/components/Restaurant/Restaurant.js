@@ -22,11 +22,6 @@ class RestaurantBase extends React.Component {
     };
   }
 
-  // static getDerivedStateFromProps(props, state) {
-  //   console.log(props);
-  //   console.log(state);
-  // }
-
   componentDidMount() {
     this.getRestaurantDetails();
 
@@ -39,10 +34,6 @@ class RestaurantBase extends React.Component {
     if (this.props.id !== prevProps.id) {
       this.getRestaurantDetails();
       this.setFavoriteStatus();
-      // this.checkFavCollection();
-    }
-
-    if (this.props.authUser) {
     }
   }
 
@@ -62,7 +53,8 @@ class RestaurantBase extends React.Component {
           const userFavItemsKeys = Object.keys(
             favObject[this.props.authUser.uid]
           );
-          // Create favList array with favorite items
+
+          /** Create favList array with favorite items */
           userFavItemsKeys.map(key => {
             favListArr.push({
               uniqueID: key,
@@ -122,7 +114,10 @@ class RestaurantBase extends React.Component {
           city: res.location.city,
           address: res.location.address,
           area: res.location.locality_verbose,
-          img: res.featured_image ? res.featured_image : res.thumb,
+          img: {
+            full: res.featured_image,
+            thumb: res.thumb
+          },
           cuisines: res.cuisines,
           currency: res.currency,
           costForTwo: res.average_cost_for_two,
@@ -176,16 +171,16 @@ class RestaurantBase extends React.Component {
     event.preventDefault();
 
     if (!isFav) {
-      const { name, city, thumb } = this.state.details;
+      const { name, city, img } = this.state.details;
 
-      const img = thumb ? thumb : thumbPlaceholder;
+      const imageUrl = img.thumb ? img.thumb : thumbPlaceholder;
 
-      // push new fav item to database
+      /** push new fav item to database */
       firebase.favorite(authUser.uid).push({
         favID: id,
         name: name,
         city: city,
-        img: img
+        img: imageUrl
       });
 
       this.checkFavCollection();
