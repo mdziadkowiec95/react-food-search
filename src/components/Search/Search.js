@@ -5,6 +5,8 @@ import Button from '../Button/Button';
 import { MdNearMe, MdCached } from 'react-icons/md';
 import Select from '../Select/Select';
 import AppContext from '../../AppContext';
+import Autocomplete from './Autocomplete';
+import cx from 'classnames';
 // import cities from 'cities.json';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
@@ -20,16 +22,8 @@ class Search extends React.Component {
       categories: []
     };
   }
-  // state = {
-  //   categories: []
-  // };
 
-  componentDidMount() {
-    // const res = fetch(citiesEndpoint)
-    //   .then(data => data.json())
-    //   .then(res => console.log(res));
-    // if (this.state.categories.length === 0) this.getCategories();
-  }
+  componentDidMount() {}
 
   render() {
     // console.log(this.props.history);
@@ -48,7 +42,7 @@ class Search extends React.Component {
                   {/* {JSON.stringify(this.state, null, 0)} */}
                 </div>
 
-                <div className={styles.formGroup}>
+                <div className={cx(styles.formGroup, styles.formGroupCity)}>
                   <button
                     type="button"
                     onClick={context.getGeolocation}
@@ -70,6 +64,9 @@ class Search extends React.Component {
                     onChange={context.handleCityChange}
                     className={cn(styles.formInput, styles.formInputLocation)}
                   />
+                  {context.cityAutocompleteMatches.length > 0 && (
+                    <Autocomplete items={context.cityAutocompleteMatches} />
+                  )}
                 </div>
                 <div className={styles.selectWrapper}>
                   <Select
@@ -86,6 +83,7 @@ class Search extends React.Component {
                 <Button submit>Search</Button>
               </form>
             </div>
+
             {/* <div>
               {context.restaurants &&
                 context.restaurants.map(item => console.log(item.name))}

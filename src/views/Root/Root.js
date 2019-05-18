@@ -29,6 +29,7 @@ class Root extends Component {
       loadingGeolocation: false,
       geolocationCoords: {},
       queryCity: '',
+      cityAutocompleteMatches: [],
       cityData: {},
       restaurants: [],
       restaurants: restaurantsTEST,
@@ -39,6 +40,7 @@ class Root extends Component {
       favList: [],
       isSidebarOpen: false,
       handleCityChange: this.handleCityChange,
+      setCity: this.setCity,
       handleCategoryChange: this.handleCategoryChange,
       handleCuisineChange: this.handleCuisineChange,
       handleFormSubmit: this.handleFormSubmit,
@@ -172,6 +174,7 @@ class Root extends Component {
         .replace('ł', 'l'); // @toDo --- temporary
 
       console.log(queryNormalized);
+
       fetch(
         `https://developers.zomato.com/api/v2.1/cities?q=${queryNormalized}`,
         {
@@ -186,24 +189,23 @@ class Root extends Component {
           const matchedLocations = res.location_suggestions;
 
           if (matchedLocations.length > 0) {
-            const cityData = {
-              name: matchedLocations[0].name,
-              id: matchedLocations[0].id
-            };
+            console.log(matchedLocations);
 
-            this.setState(
-              {
-                queryCity: cityData.name,
-                cityData: cityData
-              },
-              this.getCuisines
-            );
+            const matches = matchedLocations.map(el => {
+              return {
+                name: el.name,
+                id: el.id
+              };
+            });
+            console.log(matches);
+
+            this.setState({
+              cityAutocompleteMatches: matches
+            });
           } else {
             this.setState({
-              queryCity: '',
-              cityData: {}
+              cityAutocompleteMatches: []
             });
-            alert('Podana fraza nie pasuje do zadnej lokalizacji...');
           }
         })
         .catch(err => {
@@ -211,11 +213,20 @@ class Root extends Component {
         });
     } else {
       this.setState({
-        cityData: {},
-        cuisineID: '',
-        cuisines: []
+        cityAutocompleteMatches: []
       });
     }
+  };
+
+  setCity = (event, id, name) => {
+    this.setState({
+      queryCity: name,
+      cityData: {
+        name,
+        id
+      },
+      cityAutocompleteMatches: []
+    });
   };
 
   getCategories = () => {
