@@ -1,32 +1,48 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
-import AppContext from '../../AppContext';
-import styles from './Details.module.scss';
+import styles from './Restaurant.module.scss';
 import thumbPlaceholder from '../../assets/images/thumb-placeholder.jpg';
+import Details from './Details';
 import LikeButton from './LikeButton';
 import Spinner from '../Base/Spinner';
 import { CircleSpinner } from 'react-spinners-kit';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
-class DetailsBase extends React.Component {
+class RestaurantBase extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      details: {},
       favList: [],
       isFav: null,
       uniqueID: ''
     };
   }
 
+  // static getDerivedStateFromProps(props, state) {
+  //   console.log(props);
+  //   console.log(state);
+  // }
+
   componentDidMount() {
     this.getRestaurantDetails();
 
     if (this.props.authUser) {
       this.checkFavCollection();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.id !== prevProps.id) {
+      this.getRestaurantDetails();
+      this.setFavoriteStatus();
+      // this.checkFavCollection();
+    }
+
+    if (this.props.authUser) {
     }
   }
 
@@ -61,7 +77,7 @@ class DetailsBase extends React.Component {
               favList: favListArr,
               loading: false
             },
-            this.checkFavoriteStatus
+            this.setFavoriteStatus
           );
         } else {
           alert('undefined');
@@ -98,8 +114,28 @@ class DetailsBase extends React.Component {
       .then(data => data.json())
       .then(res => {
         console.log(res);
+
+        const result = {
+          id: res.id,
+          url: res.url,
+          name: res.name,
+          city: res.location.city,
+          address: res.location.address,
+          area: res.location.locality_verbose,
+          img: res.featured_image ? res.featured_image : res.thumb,
+          cuisines: res.cuisines,
+          currency: res.currency,
+          costForTwo: res.average_cost_for_two,
+          ratingNumber: res.user_rating.aggregate_rating,
+          ratingColor: res.user_rating.rating_color,
+          ratingText: res.user_rating.rating_text,
+          votes: res.user_rating.votes
+        };
+
+        console.log(result);
+
         this.setState({
-          details: res
+          details: result
         });
       })
       .catch(err => {
@@ -127,7 +163,7 @@ class DetailsBase extends React.Component {
     }
   };
 
-  checkFavoriteStatus = () => {
+  setFavoriteStatus = () => {
     const isFavStatus = this.checkFavStatus(this.props.id);
 
     this.setState({
@@ -140,7 +176,7 @@ class DetailsBase extends React.Component {
     event.preventDefault();
 
     if (!isFav) {
-      const { name, location, thumb } = this.state.details;
+      const { name, city, thumb } = this.state.details;
 
       const img = thumb ? thumb : thumbPlaceholder;
 
@@ -148,7 +184,7 @@ class DetailsBase extends React.Component {
       firebase.favorite(authUser.uid).push({
         favID: id,
         name: name,
-        city: location.city,
+        city: city,
         img: img
       });
 
@@ -171,48 +207,41 @@ class DetailsBase extends React.Component {
 
     if (!authUser) {
       return (
-        <>
+        <div className={styles.wrapper}>
           <h4>Sign in to like the restaurant</h4>
-        </>
+          <Details {...this.state.details} />
+        </div>
       );
     }
 
     if (authUser) {
       return (
-        <>
+        <div className={styles.wrapper}>
           {this.state.isFav === null ? (
             <Spinner
               className={styles.spinner}
               loading={!this.state.favListFetched}
             />
           ) : (
-            // <div className={styles.spinner}>
-            //   <CircleSpinner
-            //     size={60}
-            //     color="#e67e22"
-            //     loading={!this.state.favListFetched}
-            //   />
-            // </div>
             <LikeButton
               isFav={this.state.isFav}
               toggleIsFavFn={this.handleToggleFavorite}
             />
           )}
+          <Details {...this.state.details} />
           <hr />
-        </>
+        </div>
       );
     }
-
-    return <div>{this.props.id}asfasf</div>;
   }
 }
 
-const DetailsFb = withFirebase(DetailsBase);
+const RestaurantFb = withFirebase(RestaurantBase);
 
-const Details = props => (
+const Restaurant = props => (
   <AuthUserContext.Consumer>
-    {authUser => <DetailsFb authUser={authUser} id={props.id} />}
+    {authUser => <RestaurantFb authUser={authUser} id={props.id} />}
   </AuthUserContext.Consumer>
 );
 
-export default Details;
+export default Restaurant;

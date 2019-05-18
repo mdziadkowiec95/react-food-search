@@ -1,9 +1,9 @@
 import React from 'react';
 import Search from '../../components/Search/Search';
-import Details from '../../components/Details/Details';
-import styles from './Restaurant.module.scss';
+import Details from '../../components/Restaurant/Restaurant';
+import styles from './RestaurantView.module.scss';
 
-const Restaurant = props => (
+const RestaurantView = props => (
   <div>
     <Search history={props.history} />
     <div className={styles.wrapper}>
@@ -12,4 +12,4 @@ const Restaurant = props => (
   </div>
 );
 
-export default Restaurant;
+export default RestaurantView;

@@ -7,7 +7,7 @@ import { withAuthentication } from '../../components/Session';
 import Navigation from '../../components/Navigation/Navigation';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Results from '../Results/Results';
-import Restaurant from '../Restaurant/Restaurant';
+import RestaurantView from '../RestaurantView/RestaurantView';
 import SignUpView from '../SignUpView/SignUpView';
 import SignInView from '../SignInView/SignInView';
 import AccountView from '../AccountView/AccountView';
@@ -62,7 +62,7 @@ class Root extends Component {
 
   componentWillUnmount() {
     this.listenerAuth();
-    this.listenerFavorites();
+    // this.listenerFavorites();
   }
 
   runFavoritesListener = () => {
@@ -373,7 +373,7 @@ class Root extends Component {
               <Route path="/sign-in" component={SignInView} />
               <Route path="/account" component={AccountView} />
               <Route path="/password-forget" component={PasswordForgetView} />
-              <Route path="/restaurant/:id" component={Restaurant} />
+              <Route path="/restaurant/:id" component={RestaurantView} />
             </Switch>
             <div className={styles.globalSpinner}>
               <CircleSpinner

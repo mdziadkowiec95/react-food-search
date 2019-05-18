@@ -34,17 +34,18 @@ class SidebarBase extends React.Component {
     super(props);
 
     this.state = {
-      favListFetched: true,
-      favList: [...favListTEST] /** [...favListTEST] for test purposes */
+      favListFetched: false,
+      favList: [] /** [...favListTEST] for test purposes */
     };
   }
 
   componentDidMount() {
-    // if (this.props.authUser) this.checkFavCollection(); /** turn off for test purposesc */
+    if (this.props.authUser)
+      this.checkFavCollection(); /** turn off for test purposesc */
   }
 
   componentWillReceiveProps = ({ authUser }) => {
-    // if (authUser) this.checkFavCollection(); /** turn off for test purposesc */
+    if (authUser) this.checkFavCollection(); /** turn off for test purposesc */
   };
 
   checkFavCollection() {

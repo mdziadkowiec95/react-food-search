@@ -1,0 +1,18 @@
+// .button {
+//   display: block;
+//   margin-left: auto;
+// }
+
+.inner {
+  display: flex;
+  align-items: center;
+  padding: 0.3rem;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #aaa;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-left: 0.4rem;
+}
