@@ -47,7 +47,7 @@ const Details = ({
           </div>
           <div className={styles.thumb}>
             <img
-              src={img ? img : thumbPlaceholder}
+              src={img.full ? img.full : thumbPlaceholder}
               alt=""
               className={styles.thumbImg}
             />
