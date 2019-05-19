@@ -12,10 +12,34 @@ import SignUpView from '../SignUpView/SignUpView';
 import SignInView from '../SignInView/SignInView';
 import AccountView from '../AccountView/AccountView';
 import PasswordForgetView from '../PasswordForgetView/PasswordForgetView';
+import Modal from '../../Modal';
 import { CircleSpinner } from 'react-spinners-kit';
 import { debounce } from 'underscore';
 
 import { restaurantsTEST } from '../../testData';
+
+const cityAutocompleteMatchesTEST = [
+  {
+    name: 'City 1',
+    id: 1230
+  },
+  {
+    name: 'City 28',
+    id: 1238
+  },
+  {
+    name: 'City 3',
+    id: 1237
+  },
+  {
+    name: 'City 4',
+    id: 1235
+  },
+  {
+    name: 'City 5',
+    id: 1231
+  }
+];
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
@@ -29,7 +53,7 @@ class Root extends Component {
       loadingGeolocation: false,
       geolocationCoords: {},
       queryCity: '',
-      cityAutocompleteMatches: [],
+      cityAutocompleteMatches: [...cityAutocompleteMatchesTEST],
       cityData: {},
       restaurants: [],
       restaurants: restaurantsTEST,
@@ -39,6 +63,7 @@ class Root extends Component {
       cuisineID: '',
       favList: [],
       isSidebarOpen: false,
+      showModal: true,
       handleCityChange: this.handleCityChange,
       setCity: this.setCity,
       handleCategoryChange: this.handleCategoryChange,
@@ -135,16 +160,14 @@ class Root extends Component {
   };
 
   handleCityChange = e => {
-    e.persist();
+    // e.persist();
 
     this.setState({
       queryCity: e.target.value
     });
 
     if (!this.handleCityChangeDebounced) {
-      this.handleCityChangeDebounced = debounce(() => {
-        this.getCityData();
-      }, 1000);
+      this.handleCityChangeDebounced = debounce(this.getCityData, 300);
     }
 
     this.handleCityChangeDebounced();
@@ -167,6 +190,8 @@ class Root extends Component {
   };
 
   getCityData = () => {
+    // alert();
+    console.log('citydata');
     if (this.state.queryCity) {
       const queryNormalized = this.state.queryCity
         .normalize('NFD')
@@ -218,15 +243,21 @@ class Root extends Component {
     }
   };
 
-  setCity = (event, id, name) => {
-    this.setState({
-      queryCity: name,
-      cityData: {
-        name,
-        id
-      },
-      cityAutocompleteMatches: []
-    });
+  setCity = (event, isClickedOutside, id, name) => {
+    if (!isClickedOutside) {
+      this.setState({
+        queryCity: name,
+        cityData: {
+          name,
+          id
+        },
+        cityAutocompleteMatches: []
+      });
+    } else {
+      this.setState({
+        cityAutocompleteMatches: []
+      });
+    }
   };
 
   getCategories = () => {
@@ -286,7 +317,7 @@ class Root extends Component {
       history.push('/');
       this.sendSearchRequest();
     } else {
-      this.getCityData();
+      this.sendSearchRequest();
     }
   };
 
@@ -347,6 +378,7 @@ class Root extends Component {
 
           if (restaurantsArr.length > 0) {
             this.setState({
+              cityData: {},
               restaurants: restaurantsArr,
               globalLoader: false
             });
@@ -360,7 +392,21 @@ class Root extends Component {
         .catch(err => {
           console.log(err);
         });
+    } else {
+      this.setState({
+        globalLoader: false,
+        showModal: true
+      });
+
+      // alert('No such a city'); // modal
     }
+  };
+
+  closeModal = () => {
+    this.setState({
+      queryCity: '',
+      showModal: false
+    });
   };
 
   handleToggleSidebar = () => {
@@ -393,6 +439,14 @@ class Root extends Component {
                 loading={this.state.globalLoader}
               />
             </div>
+            {this.state.showModal && (
+              <Modal>
+                <div className={styles.modal}>
+                  <button onClick={this.closeModal}>x</button>
+                  <h3>No such a city</h3>
+                </div>
+              </Modal>
+            )}
           </div>
         </AppContext.Provider>
       </BrowserRouter>
