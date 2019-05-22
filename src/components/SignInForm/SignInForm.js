@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-
 import { withFirebase } from '../Firebase';
-
 import styles from './SignInForm.module.scss';
+import Button from '../Button/Button';
 
 const initialState = {
   email: '',
@@ -62,9 +61,9 @@ class SignInFormBase extends Component {
           type="password"
           placeholder="Password"
         />
-        <button className={styles.button} disabled={isInvalid} type="submit">
-          Sign In
-        </button>
+        <Button submit isDisabled={isInvalid}>
+          Sign Up
+        </Button>
 
         {error && <p>{error.message}</p>}
       </form>

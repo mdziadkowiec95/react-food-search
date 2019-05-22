@@ -83,11 +83,6 @@ class Search extends React.Component {
                 <Button submit>Search</Button>
               </form>
             </div>
-
-            {/* <div>
-              {context.restaurants &&
-                context.restaurants.map(item => console.log(item.name))}
-            </div> */}
           </>
         )}
       </AppContext.Consumer>

@@ -53,24 +53,25 @@ class Root extends Component {
       loadingGeolocation: false,
       geolocationCoords: {},
       queryCity: '',
-      cityAutocompleteMatches: [...cityAutocompleteMatchesTEST],
+      cityAutocompleteMatches: [],
       cityData: {},
       restaurants: [],
-      restaurants: restaurantsTEST,
       cuisines: [],
       categories: [],
       categoryID: '',
       cuisineID: '',
       favList: [],
       isSidebarOpen: false,
-      showModal: true,
+      isNavOpen: false,
+      showModal: false,
       handleCityChange: this.handleCityChange,
       setCity: this.setCity,
       handleCategoryChange: this.handleCategoryChange,
       handleCuisineChange: this.handleCuisineChange,
       handleFormSubmit: this.handleFormSubmit,
       getGeolocation: this.getGeolocation,
-      handleToggleSidebar: this.handleToggleSidebar
+      handleToggleSidebar: this.handleToggleSidebar,
+      handleToggleNav: this.handleToggleNav
     };
   }
 
@@ -242,7 +243,10 @@ class Root extends Component {
                 this.sendSearchRequest
               );
             } else {
-              alert('No results for the city');
+              this.setState({
+                showModal: true,
+                globalLoader: false
+              });
             }
           }
         })
@@ -322,14 +326,14 @@ class Root extends Component {
 
     history.push('/');
 
-    this.getCityData(true);
-  };
-
-  sendSearchRequest = () => {
     this.setState({
       globalLoader: true
     });
 
+    this.getCityData(true);
+  };
+
+  sendSearchRequest = () => {
     const cuisineQuery = this.state.cuisineID
       ? `&cuisines=${this.state.cuisineID}`
       : '';
@@ -419,12 +423,12 @@ class Root extends Component {
     this.setState(state => ({
       isSidebarOpen: !state.isSidebarOpen
     }));
+  };
 
-    // if (!this.state.isSidebarOpen) {
-    //   this.setState({ isSidebarOpen: true });
-    // } else {
-    //   this.setState({ isSidebarOpen: false });
-    // }
+  handleToggleNav = () => {
+    this.setState(state => ({
+      isNavOpen: !state.isNavOpen
+    }));
   };
 
   render() {

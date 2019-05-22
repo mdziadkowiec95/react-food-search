@@ -1,0 +1,10 @@
+.button {
+  width: 100%;
+  padding: 20px;
+  transition: background-color 0.25s;
+
+  &:hover,
+  &:active {
+    background-color: #ccc;
+  }
+}
