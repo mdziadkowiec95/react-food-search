@@ -9,7 +9,11 @@
   background-color: #fff;
   box-shadow: 0 0 15px #999;
 
-  animation: sidebarSlide 0.6s forwards;
+  animation: sidebarSlideIn 0.6s forwards;
+
+  &Out {
+    animation: sidebarSlideOut 0.6s forwards;
+  }
 }
 
 .inner {
@@ -23,12 +27,22 @@
   transform: translate(-50%, -50%);
 }
 
-@keyframes sidebarSlide {
+@keyframes sidebarSlideIn {
   0% {
     left: -350px;
   }
 
   100% {
     left: 0;
+  }
+}
+
+@keyframes sidebarSlideOut {
+  0% {
+    left: 0;
+  }
+
+  100% {
+    left: -350px;
   }
 }

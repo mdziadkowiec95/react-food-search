@@ -3,6 +3,7 @@ import styles from './SignUpForm.module.scss';
 import { withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import { compose } from 'recompose';
+import Button from '../Button/Button';
 
 const initialState = {
   username: '',
@@ -91,10 +92,9 @@ class SignUpFormBase extends React.Component {
           type="password"
           placeholder="Confirm Password"
         />
-        <button type="submit" disabled={isInvalid} className={styles.button}>
+        <Button submit isDisabled={isInvalid}>
           Sign Up
-        </button>
-
+        </Button>
         {error && <p>{error.message}</p>}
       </form>
     );

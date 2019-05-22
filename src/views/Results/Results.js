@@ -10,7 +10,11 @@ const Results = props => (
     {context => (
       <>
         <Search history={props.history} />
-        <List items={context.restaurants} />
+        {context.restaurants.length ? (
+          <List items={context.restaurants} />
+        ) : (
+          'no results'
+        )}
       </>
     )}
   </AppContext.Consumer>

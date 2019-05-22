@@ -53,24 +53,25 @@ class Root extends Component {
       loadingGeolocation: false,
       geolocationCoords: {},
       queryCity: '',
-      cityAutocompleteMatches: [...cityAutocompleteMatchesTEST],
+      cityAutocompleteMatches: [],
       cityData: {},
       restaurants: [],
-      restaurants: restaurantsTEST,
       cuisines: [],
       categories: [],
       categoryID: '',
       cuisineID: '',
       favList: [],
       isSidebarOpen: false,
-      showModal: true,
+      isNavOpen: false,
+      showModal: false,
       handleCityChange: this.handleCityChange,
       setCity: this.setCity,
       handleCategoryChange: this.handleCategoryChange,
       handleCuisineChange: this.handleCuisineChange,
       handleFormSubmit: this.handleFormSubmit,
       getGeolocation: this.getGeolocation,
-      handleToggleSidebar: this.handleToggleSidebar
+      handleToggleSidebar: this.handleToggleSidebar,
+      handleToggleNav: this.handleToggleNav
     };
   }
 
@@ -189,9 +190,7 @@ class Root extends Component {
     });
   };
 
-  getCityData = () => {
-    // alert();
-    console.log('citydata');
+  getCityData = getFirstMatch => {
     if (this.state.queryCity) {
       const queryNormalized = this.state.queryCity
         .normalize('NFD')
@@ -213,24 +212,42 @@ class Root extends Component {
         .then(res => {
           const matchedLocations = res.location_suggestions;
 
-          if (matchedLocations.length > 0) {
-            console.log(matchedLocations);
+          if (!getFirstMatch) {
+            if (matchedLocations.length > 0) {
+              const matches = matchedLocations.map(el => {
+                return {
+                  name: el.name,
+                  id: el.id
+                };
+              });
+              console.log(matches);
 
-            const matches = matchedLocations.map(el => {
-              return {
-                name: el.name,
-                id: el.id
-              };
-            });
-            console.log(matches);
-
-            this.setState({
-              cityAutocompleteMatches: matches
-            });
+              this.setState({
+                cityAutocompleteMatches: matches
+              });
+            } else {
+              this.setState({
+                cityAutocompleteMatches: []
+              });
+            }
           } else {
-            this.setState({
-              cityAutocompleteMatches: []
-            });
+            if (matchedLocations.length > 0) {
+              this.setState(
+                {
+                  queryCity: matchedLocations[0].name,
+                  cityData: {
+                    name: matchedLocations[0].name,
+                    id: matchedLocations[0].id
+                  }
+                },
+                this.sendSearchRequest
+              );
+            } else {
+              this.setState({
+                showModal: true,
+                globalLoader: false
+              });
+            }
           }
         })
         .catch(err => {
@@ -245,14 +262,13 @@ class Root extends Component {
 
   setCity = (event, isClickedOutside, id, name) => {
     if (!isClickedOutside) {
-      this.setState({
-        queryCity: name,
-        cityData: {
-          name,
-          id
+      this.setState(
+        {
+          queryCity: name,
+          cityAutocompleteMatches: []
         },
-        cityAutocompleteMatches: []
-      });
+        this.getCuisines
+      );
     } else {
       this.setState({
         cityAutocompleteMatches: []
@@ -308,24 +324,16 @@ class Root extends Component {
   handleFormSubmit = (e, history) => {
     e.preventDefault();
 
-    if (
-      !(
-        Object.keys(this.state.cityData).length === 0 &&
-        this.state.cityData.constructor === Object
-      )
-    ) {
-      history.push('/');
-      this.sendSearchRequest();
-    } else {
-      this.sendSearchRequest();
-    }
-  };
+    history.push('/');
 
-  sendSearchRequest = () => {
     this.setState({
       globalLoader: true
     });
 
+    this.getCityData(true);
+  };
+
+  sendSearchRequest = () => {
     const cuisineQuery = this.state.cuisineID
       ? `&cuisines=${this.state.cuisineID}`
       : '';
@@ -377,13 +385,17 @@ class Root extends Component {
           });
 
           if (restaurantsArr.length > 0) {
-            this.setState({
-              cityData: {},
-              restaurants: restaurantsArr,
-              globalLoader: false
-            });
+            this.setState(
+              {
+                cityData: {},
+                restaurants: restaurantsArr,
+                globalLoader: false
+              },
+              this.getCuisines
+            );
           } else {
             this.setState({
+              restaurants: [],
               globalLoader: false
             });
             alert('Brak dopasowań... :-(');
@@ -397,8 +409,6 @@ class Root extends Component {
         globalLoader: false,
         showModal: true
       });
-
-      // alert('No such a city'); // modal
     }
   };
 
@@ -410,11 +420,15 @@ class Root extends Component {
   };
 
   handleToggleSidebar = () => {
-    if (!this.state.isSidebarOpen) {
-      this.setState({ isSidebarOpen: true });
-    } else {
-      this.setState({ isSidebarOpen: false });
-    }
+    this.setState(state => ({
+      isSidebarOpen: !state.isSidebarOpen
+    }));
+  };
+
+  handleToggleNav = () => {
+    this.setState(state => ({
+      isNavOpen: !state.isNavOpen
+    }));
   };
 
   render() {
@@ -423,7 +437,7 @@ class Root extends Component {
         <AppContext.Provider value={this.state}>
           <div className="App">
             <Navigation />
-            {this.state.isSidebarOpen && <Sidebar />}
+            {<Sidebar delayTime={500} isMounted={this.state.isSidebarOpen} />}
             <Switch>
               <Route exact path="/" component={Results} />
               <Route path="/sign-up" component={SignUpView} />

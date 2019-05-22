@@ -1,5 +1,7 @@
 import React from 'react';
 import { withFirebase } from '../Firebase';
+import Button from '../Button/Button';
+import styles from './PasswordForgetForm.module.scss';
 
 const initialState = {
   email: '',
@@ -40,17 +42,18 @@ class PasswordForgetFormBase extends React.Component {
     return (
       <>
         <h2>Reset your password</h2>
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.onSubmit} className={styles.form}>
           <input
             name="email"
             value={this.state.email}
             onChange={this.onChange}
             type="text"
             placeholder="Email Address"
+            className={styles.input}
           />
-          <button disabled={isInvalid} type="submit">
-            Reset My Password
-          </button>
+          <Button submit disabled={isInvalid}>
+            Reset my password
+          </Button>
 
           {error && <p>{error.message}</p>}
         </form>

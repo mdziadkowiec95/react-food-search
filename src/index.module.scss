@@ -52,17 +52,21 @@ button {
 }
 
 input {
+  padding: 0.8rem;
   border: 1px solid #aaa;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
   border-radius: 5px;
+  font-size: 0.9rem;
 
   transition: all 0.25s;
 
   &:focus {
     outline: 0;
     border-color: #e67e22;
+    background-color: #eee;
+    color: #000;
   }
 }
 

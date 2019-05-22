@@ -7,6 +7,8 @@ import styles from './Sidebar.module.scss';
 import List from './List';
 import Item from './Item';
 import { CircleSpinner } from 'react-spinners-kit';
+import delayUnmounting from '../delayUnmounting';
+import cx from 'classnames';
 
 const favListTEST = [
   {
@@ -111,8 +113,12 @@ class SidebarBase extends React.Component {
       </div>
     );
 
+    const wrapperStyle = this.props.isMounted
+      ? styles.wrapper
+      : cx(styles.wrapper, styles.wrapperOut);
+
     return (
-      <aside className={styles.wrapper} onClick={this.props.toggleFn}>
+      <aside className={wrapperStyle} onClick={this.props.toggleFn}>
         <div className={styles.inner}>
           {this.props.authUser && this.state.favListFetched ? (
             <List items={this.state.favList} />
@@ -138,7 +144,7 @@ class SidebarBase extends React.Component {
 
 const SidebarFb = withFirebase(SidebarBase);
 
-const Sidebar = props => (
+const Sidebar = ({ delayTime, isMounted }) => (
   <AuthUserContext.Consumer>
     {authUser => (
       <AppContext.Consumer>
@@ -146,6 +152,8 @@ const Sidebar = props => (
           <SidebarFb
             authUser={authUser}
             toggleFn={context.handleToggleSidebar}
+            delay={delayTime}
+            isMounted={isMounted}
           />
         )}
       </AppContext.Consumer>
@@ -153,4 +161,4 @@ const Sidebar = props => (
   </AuthUserContext.Consumer>
 );
 
-export default Sidebar;
+export default delayUnmounting(Sidebar);

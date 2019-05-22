@@ -1,32 +1,77 @@
 @import '../../scss/variables';
 
 .nav {
+  $this: &;
+
   position: fixed;
   z-index: 1000;
   top: 0;
   left: 0;
+  height: 60px;
   width: 100%;
   background-color: #fff;
   box-shadow: 0 0 5px #aaa;
 
+  @media (min-width: 768px) {
+    height: auto;
+  }
+
+  &Open {
+    #{$this}List {
+      top: 0;
+
+      @media (min-width: 768px) {
+        position: static;
+      }
+    }
+  }
+
   &List {
-    display: flex;
-    justify-content: center;
-    align-self: center;
+    position: fixed;
+    background-color: #fff;
+    top: -100%;
+    z-index: 500;
+    width: 100%;
+    left: 0;
     margin: 0;
+    transition: top 0.4s;
+
+    @media (min-width: 768px) {
+      position: static;
+      display: flex;
+      justify-content: center;
+      align-self: center;
+    }
   }
 
   &Item {
-    margin: 0 0.7rem;
-    padding: 20px;
+    text-align: center;
+
+    @media (min-width: 768px) {
+      padding: 0;
+      // margin: 0 0.7rem;
+    }
 
     &Link {
       &:link,
       &:visited {
+        display: block;
         padding: 20px;
         height: 100%;
         color: #333;
+        text-align: center;
         transition: all 0.25s;
+
+        &:hover,
+        &:active {
+          &:not(.navItemLinkActive) {
+            background-color: #eee;
+          }
+        }
+
+        @media (min-width: 768px) {
+          display: inline-block;
+        }
       }
 
       &Active {
@@ -41,15 +86,29 @@
   }
 }
 
-.sidebarToggle {
+.sidebarToggler,
+.navToggler {
   position: fixed;
   top: 10px;
-  left: 30px;
   cursor: pointer;
   transition: opacity 0.25s;
 
   &:hover,
   &:active {
     opacity: 0.8;
+  }
+}
+
+.sidebarToggler {
+  z-index: 300;
+  left: 30px;
+}
+
+.navToggler {
+  z-index: 2000;
+  right: 30px;
+
+  @media (min-width: 768px) {
+    display: none;
   }
 }

@@ -74,20 +74,15 @@ class Search extends React.Component {
                     onChangeFn={context.handleCategoryChange}
                     items={context.categories}
                   />
-                  <Select
+                  {/* <Select
                     dataType="cuisine"
                     onChangeFn={context.handleCuisineChange}
                     items={context.cuisines}
-                  />
+                  /> */}
                 </div>
                 <Button submit>Search</Button>
               </form>
             </div>
-
-            {/* <div>
-              {context.restaurants &&
-                context.restaurants.map(item => console.log(item.name))}
-            </div> */}
           </>
         )}
       </AppContext.Consumer>

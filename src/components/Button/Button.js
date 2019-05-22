@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Button.module.scss';
 import cn from 'classnames';
 
-const Button = ({ secondary, primary, submit, children }) => {
+const Button = ({ secondary, primary, submit, isDisabled, children }) => {
   let btnClass;
 
   if (secondary) {
@@ -12,9 +12,13 @@ const Button = ({ secondary, primary, submit, children }) => {
   } else if (submit) {
     btnClass = cn(styles.btn, styles.btnSubmit);
   }
-
+  console.log(`disabled: ${isDisabled}`);
   return (
-    <button type={submit ? 'submit' : 'button'} className={btnClass}>
+    <button
+      type={submit ? 'submit' : 'button'}
+      disabled={isDisabled}
+      className={btnClass}
+    >
       {children}
     </button>
   );
