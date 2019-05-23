@@ -1,3 +1,5 @@
+@import '../../scss/variables';
+
 .btn {
   position: relative;
   display: inline-block;
@@ -16,16 +18,22 @@
   }
 
   &Primary {
-    background-color: #e67e22;
+    background-color: $color-primary;
     color: #fff;
   }
 
   &Secondary {
     background-color: #fff;
-    color: #e67e22;
+    border: 1px solid $color-primary;
+    color: $color-primary;
+
+    &:link,
+    &:visited {
+      color: $color-primary;
+    }
 
     &:hover {
-      background-color: #e67e22;
+      background-color: $color-primary;
       color: #fff;
     }
   }

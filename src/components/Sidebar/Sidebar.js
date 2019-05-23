@@ -118,7 +118,7 @@ class SidebarBase extends React.Component {
       : cx(styles.wrapper, styles.wrapperOut);
 
     return (
-      <aside className={wrapperStyle} onClick={this.props.toggleFn}>
+      <aside className={wrapperStyle}>
         <div className={styles.inner}>
           {this.props.authUser && this.state.favListFetched ? (
             <List items={this.state.favList} />
