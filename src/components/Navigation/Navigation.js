@@ -9,7 +9,7 @@ import cn from 'classnames';
 
 const navIconSize = 35;
 
-const Navigation = ({ authUser }) => (
+const Navigation = () => (
   <>
     <AuthUserContext.Consumer>
       {authUser => (

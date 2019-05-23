@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import styles from './Root.module.scss';
 import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
-import { withFirebase } from '../../components/Firebase';
 import AppContext from '../../AppContext';
 import { withAuthentication } from '../../components/Session';
 import Navigation from '../../components/Navigation/Navigation';
@@ -13,7 +12,7 @@ import SignInView from '../SignInView/SignInView';
 import AccountView from '../AccountView/AccountView';
 import PasswordForgetView from '../PasswordForgetView/PasswordForgetView';
 import Modal from '../../Modal';
-import { CircleSpinner } from 'react-spinners-kit';
+import GlobalLoader from '../../components/Base/GlobalLoader';
 import { debounce } from 'underscore';
 
 import { restaurantsTEST } from '../../testData';
@@ -73,6 +72,8 @@ class Root extends Component {
       handleToggleSidebar: this.handleToggleSidebar,
       handleToggleNav: this.handleToggleNav
     };
+
+    this.handleCityChangeDebounced = debounce(this.getCityData, 200);
   }
 
   componentDidMount() {
@@ -167,15 +168,11 @@ class Root extends Component {
       queryCity: e.target.value
     });
 
-    if (!this.handleCityChangeDebounced) {
-      this.handleCityChangeDebounced = debounce(this.getCityData, 300);
-    }
-
     this.handleCityChangeDebounced();
   };
 
-  handleCategoryChange = e => {
-    const ID = e.target[e.target.selectedIndex].dataset.id;
+  handleCategoryChange = event => {
+    const ID = event.target[event.target.selectedIndex].dataset.id;
 
     this.setState({
       categoryID: ID
@@ -191,7 +188,7 @@ class Root extends Component {
   };
 
   getCityData = getFirstMatch => {
-    if (this.state.queryCity) {
+    if (this.state.queryCity.length >= 2) {
       const queryNormalized = this.state.queryCity
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
@@ -437,7 +434,7 @@ class Root extends Component {
         <AppContext.Provider value={this.state}>
           <div className="App">
             <Navigation />
-            {<Sidebar delayTime={500} isMounted={this.state.isSidebarOpen} />}
+            {<Sidebar delayTime={300} isMounted={this.state.isSidebarOpen} />}
             <Switch>
               <Route exact path="/" component={Results} />
               <Route path="/sign-up" component={SignUpView} />
@@ -446,13 +443,9 @@ class Root extends Component {
               <Route path="/password-forget" component={PasswordForgetView} />
               <Route path="/restaurant/:id" component={RestaurantView} />
             </Switch>
-            <div className={styles.globalSpinner}>
-              <CircleSpinner
-                size={60}
-                color="#e67e22"
-                loading={this.state.globalLoader}
-              />
-            </div>
+
+            {this.state.globalLoader && <GlobalLoader />}
+
             {this.state.showModal && (
               <Modal>
                 <div className={styles.modal}>
