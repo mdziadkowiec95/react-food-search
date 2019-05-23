@@ -1,4 +1,4 @@
 [build]
-base = "react-food-search/"
+base = "react-food-search"
 publish = "react-food-search/build/"
 command = "yarn build"
