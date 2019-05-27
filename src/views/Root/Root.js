@@ -14,7 +14,7 @@ import PasswordForgetView from '../PasswordForgetView/PasswordForgetView';
 import Modal from '../../Modal';
 import GlobalLoader from '../../components/Base/GlobalLoader';
 import { debounce } from 'underscore';
-
+import { MdClose } from 'react-icons/md';
 import { restaurantsTEST } from '../../testData';
 
 const cityAutocompleteMatchesTEST = [
@@ -54,7 +54,7 @@ class Root extends Component {
       queryCity: '',
       cityAutocompleteMatches: [],
       cityData: {},
-      restaurants: [],
+      restaurants: [...restaurantsTEST],
       cuisines: [],
       categories: [],
       categoryID: '',
@@ -63,6 +63,7 @@ class Root extends Component {
       isSidebarOpen: false,
       isNavOpen: false,
       showModal: false,
+      modalText: 'font-size: 16px; font-size: 16px;',
       handleCityChange: this.handleCityChange,
       setCity: this.setCity,
       handleCategoryChange: this.handleCategoryChange,
@@ -94,10 +95,6 @@ class Root extends Component {
     // this.listenerFavorites();
   }
 
-  runFavoritesListener = () => {
-    // *** Favorites listener ***
-  };
-
   getGeolocation = () => {
     if (navigator.geolocation) {
       this.setState({
@@ -124,12 +121,24 @@ class Root extends Component {
   };
 
   handleLocationError = error => {
+    // alert(error.message + error.code);
     if (error.code) {
-      this.setState({
-        geolocationCoords: {},
-        geoErrorMessage: error.message,
-        loadingGeolocation: false
-      });
+      if (error.code === 2) {
+        this.setState({
+          geolocationCoords: {},
+          // geoErrorMessage: '',
+          showModal: true,
+          modalText: 'You need to allow geolocation in device browser settings',
+          loadingGeolocation: false
+        });
+      } else {
+        this.setState({
+          geolocationCoords: {},
+          showModal: true,
+          modalText: error.message,
+          loadingGeolocation: false
+        });
+      }
     }
   };
 
@@ -242,6 +251,7 @@ class Root extends Component {
             } else {
               this.setState({
                 showModal: true,
+                modalText: 'No matches for provided City',
                 globalLoader: false
               });
             }
@@ -323,11 +333,18 @@ class Root extends Component {
 
     history.push('/');
 
-    this.setState({
-      globalLoader: true
-    });
+    if (this.state.queryCity) {
+      this.setState({
+        globalLoader: true
+      });
 
-    this.getCityData(true);
+      this.getCityData(true);
+    } else {
+      this.setState({
+        showModal: true,
+        modalText: `You need to enter any city`
+      });
+    }
   };
 
   sendSearchRequest = () => {
@@ -341,7 +358,7 @@ class Root extends Component {
     console.log(
       `https://developers.zomato.com/api/v2.1/search?entity_id=${
         this.state.cityData.id
-      }&entity_type=city${cuisineQuery + categoryQuery}`
+      }&entity_type=city${cuisineQuery + categoryQuery}&start=28500`
     );
 
     if (this.state.cityData.id) {
@@ -386,16 +403,18 @@ class Root extends Component {
               {
                 cityData: {},
                 restaurants: restaurantsArr,
+                // restaurantsCountStart:
                 globalLoader: false
               },
               this.getCuisines
             );
           } else {
             this.setState({
-              restaurants: [],
+              // restaurants: [],
+              showModal: true,
+              modalText: 'No matches found for provided data',
               globalLoader: false
             });
-            alert('Brak dopasowań... :-(');
           }
         })
         .catch(err => {
@@ -404,6 +423,7 @@ class Root extends Component {
     } else {
       this.setState({
         globalLoader: false,
+        modalText: 'No matches found for provided City',
         showModal: true
       });
     }
@@ -412,6 +432,7 @@ class Root extends Component {
   closeModal = () => {
     this.setState({
       queryCity: '',
+      modalText: '',
       showModal: false
     });
   };
@@ -449,8 +470,15 @@ class Root extends Component {
             {this.state.showModal && (
               <Modal>
                 <div className={styles.modal}>
-                  <button onClick={this.closeModal}>x</button>
-                  <h3>No such a city</h3>
+                  <div className={styles.modalInner}>
+                    <button
+                      className={styles.modalButton}
+                      onClick={this.closeModal}
+                    >
+                      <MdClose size={30} color="#fff" />
+                    </button>
+                    <h3 className={styles.modalText}>{this.state.modalText}</h3>
+                  </div>
                 </div>
               </Modal>
             )}

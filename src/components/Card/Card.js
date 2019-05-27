@@ -21,7 +21,7 @@ const Card = ({
   const thumbImg = img ? img : thumbPlaceholder;
 
   return (
-    <li>
+    <li className={styles.item}>
       <Link to={`/restaurant/${id}`} className={styles.link}>
         <div className={styles.top}>
           <div className={styles.topThumb}>
@@ -36,7 +36,6 @@ const Card = ({
             <p>Cuisines: {cuisines}</p>
           </div>
         </div>
-        <div className={styles.bottom} />
       </Link>
     </li>
   );

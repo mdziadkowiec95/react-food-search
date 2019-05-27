@@ -3,6 +3,13 @@
   max-width: 85%;
 }
 
+.list {
+  @media (min-width: 1200px) {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
 .spinner {
   position: fixed;
   top: 50%;
