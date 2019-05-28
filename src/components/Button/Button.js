@@ -8,7 +8,7 @@ const Button = ({
   submit,
   isDisabled,
   href,
-  blank,
+  target,
   children
 }) => {
   let btnClass;
@@ -32,8 +32,9 @@ const Button = ({
       </button>
     );
   } else {
+    console.log(target);
     return (
-      <a href={href} target={blank ? blank : ''} className={btnClass}>
+      <a href={href} target={target ? target : null} className={btnClass}>
         {children}
       </a>
     );

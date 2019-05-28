@@ -17,29 +17,6 @@ import { debounce } from 'underscore';
 import { MdClose } from 'react-icons/md';
 import { restaurantsTEST } from '../../testData';
 
-const cityAutocompleteMatchesTEST = [
-  {
-    name: 'City 1',
-    id: 1230
-  },
-  {
-    name: 'City 28',
-    id: 1238
-  },
-  {
-    name: 'City 3',
-    id: 1237
-  },
-  {
-    name: 'City 4',
-    id: 1235
-  },
-  {
-    name: 'City 5',
-    id: 1231
-  }
-];
-
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
 class Root extends Component {
@@ -54,7 +31,8 @@ class Root extends Component {
       queryCity: '',
       cityAutocompleteMatches: [],
       cityData: {},
-      restaurants: [...restaurantsTEST],
+      restaurantsCountStart: 0,
+      restaurants: [],
       cuisines: [],
       categories: [],
       categoryID: '',
@@ -65,6 +43,7 @@ class Root extends Component {
       showModal: false,
       modalText: 'font-size: 16px; font-size: 16px;',
       handleCityChange: this.handleCityChange,
+      navigateThroughResults: this.navigateThroughResults,
       setCity: this.setCity,
       handleCategoryChange: this.handleCategoryChange,
       handleCuisineChange: this.handleCuisineChange,
@@ -347,7 +326,7 @@ class Root extends Component {
     }
   };
 
-  sendSearchRequest = () => {
+  sendSearchRequest = (countStart = 0) => {
     const cuisineQuery = this.state.cuisineID
       ? `&cuisines=${this.state.cuisineID}`
       : '';
@@ -358,14 +337,14 @@ class Root extends Component {
     console.log(
       `https://developers.zomato.com/api/v2.1/search?entity_id=${
         this.state.cityData.id
-      }&entity_type=city${cuisineQuery + categoryQuery}&start=28500`
+      }&entity_type=city${cuisineQuery + categoryQuery}&start=${countStart}`
     );
 
     if (this.state.cityData.id) {
       fetch(
         `https://developers.zomato.com/api/v2.1/search?entity_id=${
           this.state.cityData.id
-        }&entity_type=city${cuisineQuery + categoryQuery}`,
+        }&entity_type=city${cuisineQuery + categoryQuery}&start=${countStart}`,
         {
           method: 'GET',
           headers: new Headers({
@@ -401,19 +380,18 @@ class Root extends Component {
           if (restaurantsArr.length > 0) {
             this.setState(
               {
-                cityData: {},
-                restaurants: restaurantsArr,
-                // restaurantsCountStart:
-                globalLoader: false
+                globalLoader: false,
+                restaurantsCountStart: countStart,
+                restaurants: restaurantsArr
               },
               this.getCuisines
             );
           } else {
             this.setState({
-              // restaurants: [],
+              globalLoader: false,
+              restaurantsCountStart: countStart - 20,
               showModal: true,
-              modalText: 'No matches found for provided data',
-              globalLoader: false
+              modalText: 'No matches found for provided data'
             });
           }
         })
@@ -426,6 +404,26 @@ class Root extends Component {
         modalText: 'No matches found for provided City',
         showModal: true
       });
+    }
+  };
+
+  navigateThroughResults = (e, direction) => {
+    const newCount =
+      direction === 'next'
+        ? this.state.restaurantsCountStart + 20
+        : this.state.restaurantsCountStart - 20;
+
+    if (newCount >= 0) {
+      this.setState(
+        {
+          globalLoader: true
+        },
+        this.sendSearchRequest(newCount)
+      );
+    } else {
+      // this.setState({
+      //   restaurantsCountStart: 0
+      // });
     }
   };
 

@@ -11,7 +11,7 @@
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: opacity 0.25s;
 
   &:hover {
     opacity: 0.8;
@@ -26,6 +26,7 @@
     background-color: #fff;
     border: 1px solid $color-primary;
     color: $color-primary;
+    transition: background-color 0.25s, color 0.25s, opacity 0.25s;
 
     &:link,
     &:visited {

@@ -1,18 +1,38 @@
-// .button {
-//   display: block;
-//   margin-left: auto;
-// }
+@import '../../scss/animations';
+
+.wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.button {
+  background-color: #3b5998;
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 0 0 5px #aaa;
+  padding: 0.3rem 1rem;
+}
 
 .inner {
   display: flex;
   align-items: center;
-  padding: 0.3rem;
-  border-radius: 10px;
-  box-shadow: 0 0 5px #aaa;
 }
 
 .label {
   font-size: 0.9rem;
   font-weight: 700;
   margin-left: 0.4rem;
+}
+
+.alert {
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #999;
+  text-align: center;
+  animation: fadeIn 0.3s;
 }

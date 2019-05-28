@@ -1,0 +1,26 @@
+@import '../../scss/variables';
+
+.pagination {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  width: 150px;
+  height: 43px;
+  margin: 0 auto;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 0 7px #999;
+  background-color: $color-primary;
+
+  &Button {
+    flex: 1;
+    align-self: center;
+    transition: opacity 0.25s;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}

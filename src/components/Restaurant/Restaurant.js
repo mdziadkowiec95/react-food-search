@@ -4,7 +4,7 @@ import { withFirebase } from '../Firebase';
 import styles from './Restaurant.module.scss';
 import thumbPlaceholder from '../../assets/images/thumb-placeholder.jpg';
 import Details from './Details';
-import LikeButton from './LikeButton';
+import { LikeButtonAuth, LikeButtonNonAuth } from './LikeButton';
 import Spinner from '../Base/Spinner';
 import { CircleSpinner } from 'react-spinners-kit';
 
@@ -203,7 +203,7 @@ class RestaurantBase extends React.Component {
     if (!authUser) {
       return (
         <div className={styles.wrapper}>
-          <h4>Sign in to like the restaurant</h4>
+          <LikeButtonNonAuth />
           <Details {...this.state.details} />
         </div>
       );
@@ -218,7 +218,7 @@ class RestaurantBase extends React.Component {
               loading={!this.state.favListFetched}
             />
           ) : (
-            <LikeButton
+            <LikeButtonAuth
               isFav={this.state.isFav}
               toggleIsFavFn={this.handleToggleFavorite}
             />

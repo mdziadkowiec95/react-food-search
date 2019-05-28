@@ -78,7 +78,7 @@ class Details extends React.Component {
               />
             </div>
           </div>
-          <Button secondary href={url} blank>
+          <Button secondary href={url} target="_blank">
             Visit website
           </Button>
         </div>
