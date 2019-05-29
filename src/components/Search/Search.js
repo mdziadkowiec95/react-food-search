@@ -15,18 +15,7 @@ const citiesEndpoint =
   'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
 class Search extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      categories: []
-    };
-  }
-
-  componentDidMount() {}
-
   render() {
-    // console.log(this.props.history);
     return (
       <AppContext.Consumer>
         {context => (
@@ -38,10 +27,6 @@ class Search extends React.Component {
                 className={styles.form}
                 onSubmit={e => context.handleFormSubmit(e, this.props.history)}
               >
-                <div className={styles.JSON}>
-                  {/* {JSON.stringify(this.state, null, 0)} */}
-                </div>
-
                 <div className={cx(styles.formGroup, styles.formGroupCity)}>
                   <button
                     type="button"
@@ -74,11 +59,6 @@ class Search extends React.Component {
                     onChangeFn={context.handleCategoryChange}
                     items={context.categories}
                   />
-                  {/* <Select
-                    dataType="cuisine"
-                    onChangeFn={context.handleCuisineChange}
-                    items={context.cuisines}
-                  /> */}
                 </div>
                 <Button submit>Search</Button>
               </form>

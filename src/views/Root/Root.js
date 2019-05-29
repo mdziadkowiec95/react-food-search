@@ -18,6 +18,12 @@ import { MdClose } from 'react-icons/md';
 import { restaurantsTEST } from '../../testData';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
+const API_REQ_HEADER = {
+  method: 'GET',
+  headers: new Headers({
+    'user-key': API_KEY
+  })
+};
 
 class Root extends Component {
   constructor(props) {
@@ -36,8 +42,6 @@ class Root extends Component {
       cuisines: [],
       categories: [],
       categoryID: '',
-      cuisineID: '',
-      favList: [],
       isSidebarOpen: false,
       isNavOpen: false,
       showModal: false,
@@ -65,14 +69,30 @@ class Root extends Component {
           : this.setState({ authUser: null });
       }
     );
-
     this.getCategories();
   }
 
   componentWillUnmount() {
     this.listenerAuth();
-    // this.listenerFavorites();
   }
+
+  componentDidMount() {
+    this.getCategories();
+  }
+
+  getCategories = () => {
+    fetch(`https://developers.zomato.com/api/v2.1/categories`, API_REQ_HEADER)
+      .then(data => data.json())
+      .then(res => {
+        console.log(res);
+        this.setState({
+          categories: res.categories
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   getGeolocation = () => {
     if (navigator.geolocation) {
@@ -100,12 +120,10 @@ class Root extends Component {
   };
 
   handleLocationError = error => {
-    // alert(error.message + error.code);
     if (error.code) {
       if (error.code === 2) {
         this.setState({
           geolocationCoords: {},
-          // geoErrorMessage: '',
           showModal: true,
           modalText: 'You need to allow geolocation in device browser settings',
           loadingGeolocation: false
@@ -114,7 +132,7 @@ class Root extends Component {
         this.setState({
           geolocationCoords: {},
           showModal: true,
-          modalText: error.message,
+          modalText: 'You need to allow geolocation in device browser settings',
           loadingGeolocation: false
         });
       }
@@ -126,12 +144,7 @@ class Root extends Component {
       `https://developers.zomato.com/api/v2.1/geocode?lat=${
         this.state.geolocationCoords.latitude
       }&lon=${this.state.geolocationCoords.longitude}`,
-      {
-        method: 'GET',
-        headers: new Headers({
-          'user-key': API_KEY
-        })
-      }
+      API_REQ_HEADER
     )
       .then(data => data.json())
       .then(res => {
@@ -150,8 +163,6 @@ class Root extends Component {
   };
 
   handleCityChange = e => {
-    // e.persist();
-
     this.setState({
       queryCity: e.target.value
     });
@@ -186,12 +197,7 @@ class Root extends Component {
 
       fetch(
         `https://developers.zomato.com/api/v2.1/cities?q=${queryNormalized}`,
-        {
-          method: 'GET',
-          headers: new Headers({
-            'user-key': API_KEY
-          })
-        }
+        API_REQ_HEADER
       )
         .then(data => data.json())
         .then(res => {
@@ -248,62 +254,14 @@ class Root extends Component {
 
   setCity = (event, isClickedOutside, id, name) => {
     if (!isClickedOutside) {
-      this.setState(
-        {
-          queryCity: name,
-          cityAutocompleteMatches: []
-        },
-        this.getCuisines
-      );
+      this.setState({
+        queryCity: name,
+        cityAutocompleteMatches: []
+      });
     } else {
       this.setState({
         cityAutocompleteMatches: []
       });
-    }
-  };
-
-  getCategories = () => {
-    fetch(`https://developers.zomato.com/api/v2.1/categories`, {
-      method: 'GET',
-      headers: new Headers({
-        'user-key': API_KEY
-      })
-    })
-      .then(data => data.json())
-      .then(res => {
-        console.log(res);
-        this.setState({
-          categories: res.categories
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
-  getCuisines = () => {
-    if (this.state.cityData.id) {
-      fetch(
-        `https://developers.zomato.com/api/v2.1/cuisines?city_id=${
-          this.state.cityData.id
-        }`,
-        {
-          method: 'GET',
-          headers: new Headers({
-            'user-key': API_KEY
-          })
-        }
-      )
-        .then(data => data.json())
-        .then(res => {
-          console.log(res);
-          this.setState({
-            cuisines: res.cuisines
-          });
-        })
-        .catch(err => {
-          console.log(err);
-        });
     }
   };
 
@@ -345,12 +303,7 @@ class Root extends Component {
         `https://developers.zomato.com/api/v2.1/search?entity_id=${
           this.state.cityData.id
         }&entity_type=city${cuisineQuery + categoryQuery}&start=${countStart}`,
-        {
-          method: 'GET',
-          headers: new Headers({
-            'user-key': API_KEY
-          })
-        }
+        API_REQ_HEADER
       )
         .then(data => data.json())
         .then(res => {
@@ -378,18 +331,15 @@ class Root extends Component {
           });
 
           if (restaurantsArr.length > 0) {
-            this.setState(
-              {
-                globalLoader: false,
-                restaurantsCountStart: countStart,
-                restaurants: restaurantsArr
-              },
-              this.getCuisines
-            );
+            this.setState({
+              globalLoader: false,
+              restaurantsCountStart: countStart,
+              restaurants: restaurantsArr
+            });
           } else {
             this.setState({
               globalLoader: false,
-              restaurantsCountStart: countStart - 20,
+              // restaurantsCountStart: countStart,
               showModal: true,
               modalText: 'No matches found for provided data'
             });
@@ -420,10 +370,6 @@ class Root extends Component {
         },
         this.sendSearchRequest(newCount)
       );
-    } else {
-      // this.setState({
-      //   restaurantsCountStart: 0
-      // });
     }
   };
 
@@ -452,6 +398,7 @@ class Root extends Component {
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           <div className="App">
+            {this.state.globalLoader && <GlobalLoader />}
             <Navigation />
             {<Sidebar delayTime={300} isMounted={this.state.isSidebarOpen} />}
             <Switch>
@@ -462,8 +409,6 @@ class Root extends Component {
               <Route path="/password-forget" component={PasswordForgetView} />
               <Route path="/restaurant/:id" component={RestaurantView} />
             </Switch>
-
-            {this.state.globalLoader && <GlobalLoader />}
 
             {this.state.showModal && (
               <Modal>
