@@ -42,8 +42,9 @@ class SidebarBase extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.authUser)
-      this.checkFavCollection(); /** turn off for test purposesc */
+    if (this.props.authUser) this.checkFavCollection();
+
+    document.addEventListener('mousedown', this.handleClickOutside);
   }
 
   componentWillReceiveProps = ({ authUser }) => {
@@ -98,7 +99,15 @@ class SidebarBase extends React.Component {
 
   componentWillUnmount() {
     this.props.firebase.favorites().off();
+
+    document.removeEventListener('mousedown', this.handleClickOutside);
   }
+
+  handleClickOutside = e => {
+    if (this.wrapEl && !this.wrapEl.contains(e.target)) {
+      this.props.toggleFn();
+    }
+  };
 
   render() {
     const loadingMessage = this.state.favListFetched ? (
@@ -118,7 +127,7 @@ class SidebarBase extends React.Component {
       : cx(styles.wrapper, styles.wrapperOut);
 
     return (
-      <aside className={wrapperStyle}>
+      <aside className={wrapperStyle} ref={wrapEl => (this.wrapEl = wrapEl)}>
         <div className={styles.inner}>
           {this.props.authUser && this.state.favListFetched ? (
             <List items={this.state.favList} />

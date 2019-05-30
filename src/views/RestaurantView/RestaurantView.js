@@ -5,7 +5,6 @@ import styles from './RestaurantView.module.scss';
 
 const RestaurantView = props => (
   <div>
-    <Search history={props.history} />
     <div className={styles.wrapper}>
       <Details id={props.match.params.id} />
     </div>
