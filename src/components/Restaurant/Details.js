@@ -2,21 +2,22 @@ import React from 'react';
 import styles from './Details.module.scss';
 import Button from '../Button/Button';
 import thumbPlaceholder from '../../assets/images/thumb-placeholder.jpg';
-import GlobalLoader from '../Base/GlobalLoader';
+import ImageFullyLoaded from '../ImageFullyLoaded/ImageFullyLoaded';
+import Heading from '../Heading/Heading';
 
 class Details extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isLoading: true
+      dataArrived: false
     };
   }
 
   static getDerivedStateFromProps(props, state) {
     if (props.id) {
       return {
-        isLoading: false
+        dataArrived: true
       };
     } else {
       return null;
@@ -45,12 +46,10 @@ class Details extends React.Component {
       color: `#${ratingColor}`
     };
 
-    if (this.state.isLoading) {
-      return <GlobalLoader />;
-    } else {
+    if (this.state.dataArrived) {
       return (
         <div className={styles.wrapper}>
-          <h2 className={styles.name}>{name}</h2>
+          <Heading background>{name}</Heading>
           <div className={styles.inner}>
             <div className={styles.details}>
               <p>{cuisines}</p>
@@ -71,10 +70,10 @@ class Details extends React.Component {
               <p>{cuisines}</p>
             </div>
             <div className={styles.thumb}>
-              <img
-                src={img.full ? img.full : thumbPlaceholder}
+              <ImageFullyLoaded
+                imageUrl={img.full ? img.full : thumbPlaceholder}
                 alt=""
-                className={styles.thumbImg}
+                imgClass={styles.thumbImg}
               />
             </div>
           </div>
@@ -83,6 +82,8 @@ class Details extends React.Component {
           </Button>
         </div>
       );
+    } else {
+      return null;
     }
   }
 }

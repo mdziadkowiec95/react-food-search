@@ -1,12 +1,13 @@
 import React from 'react';
 import SignUpForm from '../../components/SignUpForm/SignUpForm';
-// import { FirebaseContext } from '../../components/Firebase';
+import Container from '../../components/Base/Container';
+import Heading from '../../components/Heading/Heading';
 
 const SignUpView = props => (
-  <div>
-    <h2>Sign Up view</h2>
+  <Container>
+    <Heading background>Sign Up view</Heading>
     <SignUpForm />
-  </div>
+  </Container>
 );
 
 export default SignUpView;

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import styles from './Root.module.scss';
 import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import AppContext from '../../AppContext';
 import { withAuthentication } from '../../components/Session';
@@ -11,9 +10,9 @@ import SignUpView from '../SignUpView/SignUpView';
 import SignInView from '../SignInView/SignInView';
 import AccountView from '../AccountView/AccountView';
 import PasswordForgetView from '../PasswordForgetView/PasswordForgetView';
-import Modal from '../../Modal';
-import { debounce } from 'underscore';
-import { restaurantsTEST } from '../../testData';
+// import Modal from '../../Modal';
+// import { debounce } from 'underscore';
+// import { restaurantsTEST } from '../../testData';
 import Search from '../../components/Search/Search';
 
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;

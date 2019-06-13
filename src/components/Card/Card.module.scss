@@ -5,6 +5,9 @@
     flex: 1 1 calc(50% - 2 * 0.7rem);
     margin: 0 0.7rem 1rem 0.7rem;
   }
+
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .link {
@@ -13,20 +16,18 @@
   padding: 0.2rem;
   box-shadow: 0 0 15px #999;
   border-radius: 10px;
-  transition: opacity 0.25s, border-color 0.25s;
 
   @media (min-width: 768px) {
     display: flex;
   }
 
-  &:link,
-  &:visited {
-    color: #333;
-    border: 1px solid transparent;
-  }
+  color: #333;
+  border: 1px solid transparent;
+  transition: transform 0.25s, opacity 0.25s, border-color 0.25s;
 
   &:hover,
   &:active {
+    transform: scale(1.03);
     opacity: 0.8;
     color: #333;
     border-color: #e67e22;
@@ -34,7 +35,6 @@
 }
 
 .top {
-  // display: flex;
   padding: 1rem 0.5rem;
 
   @media (min-width: 576px) {

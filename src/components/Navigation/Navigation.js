@@ -1,11 +1,12 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import styles from './Navigation.module.scss';
 import SignOutButton from '../SignOutButton/SignOutButton';
 import { AuthUserContext } from '../Session';
 import AppContext from '../../AppContext';
 import { MdMenu, MdClose, MdFirstPage, MdLastPage } from 'react-icons/md';
 import cn from 'classnames';
+import brandLogo from '../../assets/images/foodify-logo.png';
 
 const navIconSize = 35;
 
@@ -122,6 +123,13 @@ const NavigationNonAuth = ({
           <MdMenu size={navIconSize} />
         )}
       </button>
+
+      <div className={styles.navLogo}>
+        <Link to="/">
+          <img src={brandLogo} alt="Foodify brand logo" />
+        </Link>
+      </div>
+
       <ul className={styles.navList}>
         <li className={styles.navItem}>
           <NavLink

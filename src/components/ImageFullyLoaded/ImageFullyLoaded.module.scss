@@ -1,0 +1,17 @@
+.wrapper {
+  max-height: 500px;
+}
+
+.img {
+  transition: opacity 0.3s;
+
+  &Hidden {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &Loaded {
+    visibility: visible;
+    opacity: 1;
+  }
+}

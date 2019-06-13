@@ -5,31 +5,9 @@ import { withFirebase } from '../Firebase';
 import AppContext from '../../AppContext';
 import styles from './Sidebar.module.scss';
 import List from './List';
-import Item from './Item';
 import { CircleSpinner } from 'react-spinners-kit';
 import delayUnmounting from '../delayUnmounting';
 import cx from 'classnames';
-
-const favListTEST = [
-  {
-    city: 'Kraków',
-    favID: '10401007',
-    img: '/static/media/thumb-placeholder.73058276.jpg',
-    name: 'Pod Wawelem Kompania Kuflowa'
-  },
-  {
-    city: 'Kraków',
-    favID: '10401007',
-    img: '/static/media/thumb-placeholder.73058276.jpg',
-    name: 'Pod Wawelem Kompania Kuflowa'
-  },
-  {
-    city: 'Kraków',
-    favID: '10401007',
-    img: '/static/media/thumb-placeholder.73058276.jpg',
-    name: 'Pod Wawelem Kompania Kuflowa'
-  }
-];
 
 class SidebarBase extends React.Component {
   constructor(props) {
@@ -37,7 +15,7 @@ class SidebarBase extends React.Component {
 
     this.state = {
       favListFetched: false,
-      favList: [] /** [...favListTEST] for test purposes */
+      favList: []
     };
   }
 
@@ -47,12 +25,15 @@ class SidebarBase extends React.Component {
     document.addEventListener('mousedown', this.handleClickOutside);
   }
 
-  componentWillReceiveProps = ({ authUser }) => {
-    if (authUser) this.checkFavCollection(); /** turn off for test purposesc */
-  };
+  // componentWillReceiveProps = ({ authUser }) => {
+  //   if (authUser) this.checkFavCollection(); /** remove to test componentDidUpdate */
+  // };
+
+  componentDidUpdate(prevProps) {
+    if (this.props.authUser !== prevProps.authUser) this.checkFavCollection();
+  }
 
   checkFavCollection() {
-    // alert();
     this.props.firebase.favorites().on('value', snapshot => {
       const favObject = snapshot.val();
 
@@ -136,12 +117,15 @@ class SidebarBase extends React.Component {
               {this.props.authUser ? (
                 loadingMessage
               ) : (
-                <>
-                  <p>Sidebar available only for registered users.</p>
+                <div className={styles.nonAuthBox}>
+                  <p>Sidebar is available only for registered users.</p>
                   <p>
-                    Please <Link to="/sign-in">SIGN IN</Link>
+                    Please{' '}
+                    <Link to="/sign-in" className={styles.nonAuthBoxLink}>
+                      SIGN IN
+                    </Link>
                   </p>
-                </>
+                </div>
               )}
             </h3>
           )}

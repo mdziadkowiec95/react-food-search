@@ -1,8 +1,9 @@
 import React from 'react';
+import Heading from '../../components/Heading/Heading';
 
 const AdminView = () => (
   <div>
-    <h1>Admin</h1>
+    <Heading background>Admin view</Heading>
     <p>Restricted area! Only users with the admin role are authorized.</p>
   </div>
 );

@@ -1,14 +1,11 @@
 import React from 'react';
-import Search from '../../components/Search/Search';
 import Details from '../../components/Restaurant/Restaurant';
-import styles from './RestaurantView.module.scss';
+import Container from '../../components/Base/Container';
 
-const RestaurantView = props => (
-  <div>
-    <div className={styles.wrapper}>
-      <Details id={props.match.params.id} />
-    </div>
-  </div>
+const RestaurantView = ({ match, history }) => (
+  <Container>
+    <Details id={match.params.id} />
+  </Container>
 );
 
 export default RestaurantView;

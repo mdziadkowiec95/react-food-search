@@ -1,13 +1,14 @@
 import React from 'react';
 import { AuthUserContext } from '../Session';
 import { withFirebase } from '../Firebase';
+import { withRouter } from 'react-router-dom';
 import styles from './Restaurant.module.scss';
 import thumbPlaceholder from '../../assets/images/thumb-placeholder.jpg';
 import Details from './Details';
 import { LikeButtonAuth, LikeButtonNonAuth } from './LikeButton';
 import Spinner from '../Base/Spinner';
-import { CircleSpinner } from 'react-spinners-kit';
-
+import GlobalLoader from '../Base/GlobalLoader';
+import { compose } from 'recompose';
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
 
 class RestaurantBase extends React.Component {
@@ -23,15 +24,28 @@ class RestaurantBase extends React.Component {
   }
 
   componentDidMount() {
+    this.setState(
+      {
+        isLoading: true
+      },
+      this.getRestaurantData
+    );
+  }
+
+  getRestaurantData = () => {
     this.getRestaurantDetails();
 
     if (this.props.authUser) {
       this.checkFavCollection();
     }
-  }
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.id !== prevProps.id) {
+      this.setState({
+        isLoading: true
+      });
+
       this.getRestaurantDetails();
       this.setFavoriteStatus();
     }
@@ -91,10 +105,10 @@ class RestaurantBase extends React.Component {
     });
   }
 
-  getRestaurantDetails() {
+  getRestaurantDetails(id) {
     fetch(
       `https://developers.zomato.com/api/v2.1/restaurant?res_id=${
-        this.props.id
+        id ? id : this.props.id
       }`,
       {
         method: 'GET',
@@ -130,11 +144,13 @@ class RestaurantBase extends React.Component {
         console.log(result);
 
         this.setState({
+          isLoading: false,
           details: result
         });
       })
       .catch(err => {
         console.log(err);
+        this.props.history.push('/restaurant/6107170');
       });
   }
 
@@ -200,6 +216,10 @@ class RestaurantBase extends React.Component {
   render() {
     const { id, authUser } = this.props;
 
+    if (this.state.isLoading) {
+      return <GlobalLoader />;
+    }
+
     if (!authUser) {
       return (
         <div className={styles.wrapper}>
@@ -207,9 +227,7 @@ class RestaurantBase extends React.Component {
           <Details {...this.state.details} />
         </div>
       );
-    }
-
-    if (authUser) {
+    } else {
       return (
         <div className={styles.wrapper}>
           {this.state.isFav === null ? (
@@ -231,11 +249,15 @@ class RestaurantBase extends React.Component {
   }
 }
 
-const RestaurantFb = withFirebase(RestaurantBase);
+// const RestaurantCoposed = withFirebase(RestaurantBase);
+const RestaurantComposed = compose(
+  withFirebase,
+  withRouter
+)(RestaurantBase);
 
 const Restaurant = props => (
   <AuthUserContext.Consumer>
-    {authUser => <RestaurantFb authUser={authUser} id={props.id} />}
+    {authUser => <RestaurantComposed authUser={authUser} id={props.id} />}
   </AuthUserContext.Consumer>
 );
 

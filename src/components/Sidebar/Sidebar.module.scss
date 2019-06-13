@@ -1,9 +1,11 @@
+@import '../../scss/variables.scss';
+
 .wrapper {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
-  width: 350px;
+  width: 320px;
   height: 100%;
   padding-top: 100px;
   background-color: #fff;
@@ -27,9 +29,17 @@
   transform: translate(-50%, -50%);
 }
 
+.nonAuthBox {
+  padding: 1rem;
+
+  &Link {
+    color: $color-primary;
+  }
+}
+
 @keyframes sidebarSlideIn {
   0% {
-    left: -350px;
+    left: -320px;
   }
 
   100% {
@@ -43,6 +53,6 @@
   }
 
   100% {
-    left: -350px;
+    left: -320px;
   }
 }

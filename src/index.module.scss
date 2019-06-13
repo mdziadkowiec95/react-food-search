@@ -18,11 +18,8 @@ body {
 }
 
 a {
-  &:link,
-  &:visited {
-    color: #ddd;
-    text-decoration: none;
-  }
+  color: #ddd;
+  text-decoration: none;
 }
 
 ul {
