@@ -1,3 +1,13 @@
+# Foodify SPA
+
+## See [DEMO here](https://reactfoodsearch.netlify.com/)
+
+## Built With
+
+- [React](https://reactjs.org/) - Frontend framework
+- [Firebase](https://firebase.google.com/) - real time database
+- [ZomatoAPI](https://developers.zomato.com/documentation?lang=pl)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

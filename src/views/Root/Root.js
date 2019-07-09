@@ -10,18 +10,7 @@ import SignUpView from '../SignUpView/SignUpView';
 import SignInView from '../SignInView/SignInView';
 import AccountView from '../AccountView/AccountView';
 import PasswordForgetView from '../PasswordForgetView/PasswordForgetView';
-// import Modal from '../../Modal';
-// import { debounce } from 'underscore';
-// import { restaurantsTEST } from '../../testData';
 import Search from '../../components/Search/Search';
-
-const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
-const API_REQ_HEADER = {
-  method: 'GET',
-  headers: new Headers({
-    'user-key': API_KEY
-  })
-};
 
 class Root extends Component {
   constructor(props) {

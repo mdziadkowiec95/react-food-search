@@ -9,7 +9,9 @@ import { LikeButtonAuth, LikeButtonNonAuth } from './LikeButton';
 import Spinner from '../Base/Spinner';
 import GlobalLoader from '../Base/GlobalLoader';
 import { compose } from 'recompose';
+
 const API_KEY = process.env.REACT_APP_FOOD_API_KEY;
+const DEFAULT_RESTAURANT_ID = '6107170';
 
 class RestaurantBase extends React.Component {
   constructor(props) {
@@ -149,18 +151,14 @@ class RestaurantBase extends React.Component {
         });
       })
       .catch(err => {
-        console.log(err);
-        this.props.history.push('/restaurant/6107170');
+        this.props.history.push(`/restaurant/${DEFAULT_RESTAURANT_ID}`);
       });
   }
 
   checkFavStatus = id => {
-    console.log(this.state);
     if (this.state.favList.length > 0) {
       const index = this.state.favList.findIndex(el => el.favID === id);
       const isFav = index !== -1 ? true : false;
-
-      console.log(isFav);
 
       return {
         isFav: isFav,
