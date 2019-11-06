@@ -88,7 +88,6 @@ class RestaurantBase extends React.Component {
             this.setFavoriteStatus
           );
         } else {
-          alert('undefined');
           this.setState({
             favList: [],
             loading: false,

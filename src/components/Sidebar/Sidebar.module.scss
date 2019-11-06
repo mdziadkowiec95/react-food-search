@@ -37,6 +37,11 @@
   }
 }
 
+.emptySidebar {
+  padding: 0 15px;
+  text-align: center;
+}
+
 @keyframes sidebarSlideIn {
   0% {
     left: -320px;

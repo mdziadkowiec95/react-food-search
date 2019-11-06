@@ -63,15 +63,16 @@ class SidebarBase extends React.Component {
             loading: false
           });
         } else {
-          alert('undefined');
           this.setState({
             favList: [],
+            favListFetched: true,
             loading: false
           });
         }
       } else {
         this.setState({
           favList: [],
+          favListFetched: true,
           loading: false
         });
       }
@@ -92,7 +93,10 @@ class SidebarBase extends React.Component {
 
   render() {
     const loadingMessage = this.state.favListFetched ? (
-      `There are no favorite items`
+      <h3 className={styles.emptySidebar}>
+        Favorite list is empty.
+        <br /> Let's serach for your best places now!
+      </h3>
     ) : (
       <div className={styles.spinner}>
         <CircleSpinner
@@ -110,10 +114,12 @@ class SidebarBase extends React.Component {
     return (
       <aside className={wrapperStyle} ref={wrapEl => (this.wrapEl = wrapEl)}>
         <div className={styles.inner}>
-          {this.props.authUser && this.state.favListFetched ? (
+          {this.props.authUser &&
+          this.state.favListFetched &&
+          this.state.favList.length !== 0 ? (
             <List items={this.state.favList} />
           ) : (
-            <h3>
+            <>
               {this.props.authUser ? (
                 loadingMessage
               ) : (
@@ -127,7 +133,7 @@ class SidebarBase extends React.Component {
                   </p>
                 </div>
               )}
-            </h3>
+            </>
           )}
         </div>
       </aside>
