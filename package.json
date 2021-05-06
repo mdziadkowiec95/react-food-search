@@ -16,7 +16,7 @@
     "recompose": "^0.30.0",
     "styled-components": "^4.2.0",
     "styled-icons": "^7.9.0",
-    "underscore": "^1.9.1"
+    "underscore": "^1.12.1"
   },
   "scripts": {
     "start": "react-scripts start",
